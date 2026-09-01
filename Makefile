@@ -151,18 +151,22 @@ endif
 # Extract docs for a section from openshift-docs.
 #
 # Usage:
+#   make extract                        # both sections
 #   make extract SECTION=installing
 #   make extract SECTION=updating
 extract:
-ifndef SECTION
-	@echo "Usage: make extract SECTION=installing|updating"
-else ifeq ($(SECTION),installing)
+ifeq ($(SECTION),installing)
 	@bash scripts/extract-install-docs.sh
 else ifeq ($(SECTION),updating)
 	@bash scripts/extract-updating-docs.sh
-else
+else ifdef SECTION
 	@echo "ERROR: No extraction script for section '$(SECTION)'"
 	@echo "Available: installing, updating"
+else
+	@echo "=== Extracting docs for all sections ==="
+	@bash scripts/extract-install-docs.sh
+	@bash scripts/extract-updating-docs.sh
+	@echo "=== All sections extracted ==="
 endif
 
 # Run the training loop for a section.
@@ -185,8 +189,9 @@ help:
 	@echo "  make init [SECTION=installing|updating]"
 	@echo "    Clone required source repositories (run this first)"
 	@echo ""
-	@echo "  make extract SECTION=installing|updating"
+	@echo "  make extract [SECTION=installing|updating]"
 	@echo "    Extract docs from openshift-docs repo (auto-clones if needed)"
+	@echo "    Defaults to both sections if SECTION is not specified"
 	@echo ""
 	@echo "  make diffs [SECTION=installing|updating]"
 	@echo "    Generate ALL code diffs for both sections, all versions (4.16-4.22)"

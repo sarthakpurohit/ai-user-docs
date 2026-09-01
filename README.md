@@ -57,7 +57,8 @@ make init
 This pulls the official docs from `openshift/openshift-docs` (auto-clones the repo on first run, ~2 min):
 
 ```bash
-make extract SECTION=installing
+make extract                        # both sections
+make extract SECTION=installing     # or just one section
 ```
 
 This creates `docs-corpus/ocp/4.16/installing/`, `docs-corpus/ocp/4.17/installing/`, etc.
@@ -106,7 +107,8 @@ make init SECTION=updating       # only repos for updating
 ### 2. Extract docs corpus
 
 ```bash
-make extract SECTION=installing
+make extract                        # both sections
+make extract SECTION=installing     # or just one
 make extract SECTION=updating
 ```
 
