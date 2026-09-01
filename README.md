@@ -1,16 +1,18 @@
 # ai-user-docs
 
-AI-driven user-facing documentation generation using LLM skills trained on source code diffs.
+AI-driven generation of user-facing documentation for [OKD](https://www.okd.io/) and [OpenShift Container Platform](https://www.redhat.com/en/technologies/cloud-computing/openshift/container-platform), using LLM skills trained on source code diffs.
+
+OKD/OpenShift documentation is built from [openshift/openshift-docs](https://github.com/openshift/openshift-docs) using AsciiDoc and covers ~20 sections (Installing, Updating, Networking, Security, etc.) that must be refreshed every release. This project automates that refresh.
 
 ## What This Does
 
-Generates updated documentation for each release by applying a simple formula:
+Generates updated OpenShift documentation for each release by applying a simple formula:
 
 ```
 Docs(version) = SKILL.md + Docs(previous_version) + CodeDiff(previous → current)
 ```
 
-An LLM reads the previous version's documentation, analyzes what changed in the source code across multiple repositories, and produces an updated documentation set. A trained **SKILL.md** file tells the LLM exactly what to look for in diffs and what rules to follow.
+An LLM reads the previous version's OpenShift documentation, analyzes what changed in the source code across multiple repositories (e.g., `openshift/installer`, `openshift/api`, `openshift/cluster-version-operator`), and produces an updated AsciiDoc documentation set. A trained **SKILL.md** file encodes OpenShift doc conventions, AsciiDoc patterns, and lessons learned from prior iterations.
 
 ## How It Works
 
@@ -61,7 +63,7 @@ Each section was trained over 6 iterations (versions 4.17 through 4.22), with th
 
 ### 1. Clone source repositories
 
-The diff generation scripts expect bare clones of the relevant source repos:
+The diff generation scripts expect bare clones of the relevant OpenShift source repos:
 
 ```bash
 # For the installing section
@@ -120,7 +122,7 @@ make score VERSION=4.17 SECTION=installing
 ### LLM-Based (semantic, thorough)
 - **Semantic Accuracy** — are the facts correct?
 - **Completeness** — are all code changes reflected?
-- **Structure Compliance** — are AsciiDoc conventions followed?
+- **Structure Compliance** — are AsciiDoc/OpenShift doc conventions followed?
 - **Command Accuracy** — are CLI commands verified against source?
 
 ## Key Findings
