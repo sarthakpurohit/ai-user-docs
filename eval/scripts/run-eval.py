@@ -15,7 +15,7 @@ import sys
 import difflib
 from pathlib import Path
 
-BASE_DIR = Path("/home/sapurohi/Desktop/Agentic OKD docs")
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 EVAL_DIR = BASE_DIR / "eval"
 
 

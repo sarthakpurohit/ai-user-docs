@@ -13,7 +13,8 @@
 
 set -euo pipefail
 
-BASE_DIR="/home/sapurohi/Desktop/Agentic OKD docs"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+BASE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 CORPUS_DIR="${BASE_DIR}/docs-corpus"
 EVAL_SCRIPT="${BASE_DIR}/scripts/evaluate-generated-docs.py"
 

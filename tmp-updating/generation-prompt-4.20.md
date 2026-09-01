@@ -4,20 +4,20 @@ You are generating updated "Updating clusters" documentation for OpenShift 4.20 
 
 ## Your Task
 
-Follow the skill file at `/home/sapurohi/Desktop/Agentic OKD docs/skills/generate-updating-docs/SKILL.md` exactly.
+Follow the skill file at `skills/generate-updating-docs/SKILL.md` exactly.
 
 ## Inputs
 
-- **Previous version docs (4.19 baseline):** `/home/sapurohi/Desktop/Agentic OKD docs/docs-corpus/ocp/4.19/updating/`
-- **Code diff summary:** `/home/sapurohi/Desktop/Agentic OKD docs/diffs/updating/4.19-to-4.20/combined-diff-4.19-to-4.20.md`
+- **Previous version docs (4.19 baseline):** `docs-corpus/ocp/4.19/updating/`
+- **Code diff summary:** `diffs/updating/4.19-to-4.20/combined-diff-4.19-to-4.20.md`
 - **Target distro:** `ocp`
-- **Output directory:** `/home/sapurohi/Desktop/Agentic OKD docs/generated/updating/4.20/`
+- **Output directory:** `generated/updating/4.20/`
 - **Source repos (for runtime lookup):**
-  - `cluster-version-operator.git/` (bare) at `/home/sapurohi/Desktop/Agentic OKD docs/cluster-version-operator.git`
-  - `oc.git/` (bare) at `/home/sapurohi/Desktop/Agentic OKD docs/oc.git`
-  - `machine-config-operator/` (non-bare) at `/home/sapurohi/Desktop/Agentic OKD docs/machine-config-operator`
-  - `api.git/` (bare) at `/home/sapurohi/Desktop/Agentic OKD docs/api.git`
-  - `cluster-network-operator.git/` (bare) at `/home/sapurohi/Desktop/Agentic OKD docs/cluster-network-operator.git`
+  - `cluster-version-operator.git/` (bare) at `cluster-version-operator.git`
+  - `oc.git/` (bare) at `oc.git`
+  - `machine-config-operator/` (non-bare) at `machine-config-operator`
+  - `api.git/` (bare) at `api.git`
+  - `cluster-network-operator.git/` (bare) at `cluster-network-operator.git`
 
 ## Instructions
 
@@ -29,7 +29,7 @@ Follow the skill file at `/home/sapurohi/Desktop/Agentic OKD docs/skills/generat
 
 ## Output Requirements
 
-- Write ALL output files to `/home/sapurohi/Desktop/Agentic OKD docs/generated/updating/4.20/`
+- Write ALL output files to `generated/updating/4.20/`
 - Maintain the exact directory structure from the 4.19 baseline
 - Files from the 4.19 baseline should appear in the output UNLESS they clearly belong to a different documentation section (Rule 21) or are deprecated content (Rule 26)
 - New modules/assemblies may be added if the diff warrants them

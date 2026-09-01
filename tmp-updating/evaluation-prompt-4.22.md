@@ -6,19 +6,19 @@ You are evaluating AI-generated "Updating clusters" documentation for OpenShift 
 
 ## Three-Way Inputs
 
-1. **Baseline (4.21):** `/home/sapurohi/Desktop/Agentic OKD docs/docs-corpus/ocp/4.21/updating/`
-2. **Generated (4.22):** `/home/sapurohi/Desktop/Agentic OKD docs/generated/updating/4.22/`
-3. **Ground Truth (4.22):** `/home/sapurohi/Desktop/Agentic OKD docs/docs-corpus/ocp/4.22/updating/`
+1. **Baseline (4.21):** `docs-corpus/ocp/4.21/updating/`
+2. **Generated (4.22):** `generated/updating/4.22/`
+3. **Ground Truth (4.22):** `docs-corpus/ocp/4.22/updating/`
 
 ## Also Read
 
-- **Code diff:** `/home/sapurohi/Desktop/Agentic OKD docs/diffs/updating/4.21-to-4.22/combined-diff-4.21-to-4.22.md`
+- **Code diff:** `diffs/updating/4.21-to-4.22/combined-diff-4.21-to-4.22.md`
 - **Source repos (for grounded verification):**
-  - CVO: `/home/sapurohi/Desktop/Agentic OKD docs/cluster-version-operator.git` (bare, branch: release-4.22)
-  - oc: `/home/sapurohi/Desktop/Agentic OKD docs/oc.git` (bare, branch: release-4.22)
-  - MCO: `/home/sapurohi/Desktop/Agentic OKD docs/machine-config-operator` (non-bare, branch: origin/release-4.22)
-  - API: `/home/sapurohi/Desktop/Agentic OKD docs/api.git` (bare, branch: release-4.22)
-  - CNO: `/home/sapurohi/Desktop/Agentic OKD docs/cluster-network-operator.git` (bare, branch: release-4.22)
+  - CVO: `cluster-version-operator.git` (bare, branch: release-4.22)
+  - oc: `oc.git` (bare, branch: release-4.22)
+  - MCO: `machine-config-operator` (non-bare, branch: origin/release-4.22)
+  - API: `api.git` (bare, branch: release-4.22)
+  - CNO: `cluster-network-operator.git` (bare, branch: release-4.22)
 
 ## Evaluation Dimensions
 
@@ -37,7 +37,7 @@ Verify CLI commands/flags against source code.
 
 ## Output Format
 
-Write your full evaluation to `/home/sapurohi/Desktop/Agentic OKD docs/eval/dataset/cases/updating/case-4.22/llm-eval-results.md`
+Write your full evaluation to `eval/dataset/cases/updating/case-4.22/llm-eval-results.md`
 
 Structure:
 ```

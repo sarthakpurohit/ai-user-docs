@@ -6,19 +6,19 @@ You are evaluating AI-generated "Updating clusters" documentation for OpenShift 
 
 ## Three-Way Inputs
 
-1. **Baseline (4.17):** `/home/sapurohi/Desktop/Agentic OKD docs/docs-corpus/ocp/4.17/updating/`
-2. **Generated (4.18):** `/home/sapurohi/Desktop/Agentic OKD docs/generated/updating/4.18/`
-3. **Ground Truth (4.18):** `/home/sapurohi/Desktop/Agentic OKD docs/docs-corpus/ocp/4.18/updating/`
+1. **Baseline (4.17):** `docs-corpus/ocp/4.17/updating/`
+2. **Generated (4.18):** `generated/updating/4.18/`
+3. **Ground Truth (4.18):** `docs-corpus/ocp/4.18/updating/`
 
 ## Also Read
 
-- **Code diff:** `/home/sapurohi/Desktop/Agentic OKD docs/diffs/updating/4.17-to-4.18/combined-diff-4.17-to-4.18.md`
+- **Code diff:** `diffs/updating/4.17-to-4.18/combined-diff-4.17-to-4.18.md`
 - **Source repos (for grounded verification):**
-  - CVO: `/home/sapurohi/Desktop/Agentic OKD docs/cluster-version-operator.git` (bare, branch: release-4.18)
-  - oc: `/home/sapurohi/Desktop/Agentic OKD docs/oc.git` (bare, branch: release-4.18)
-  - MCO: `/home/sapurohi/Desktop/Agentic OKD docs/machine-config-operator` (non-bare, branch: origin/release-4.18)
-  - API: `/home/sapurohi/Desktop/Agentic OKD docs/api.git` (bare, branch: release-4.18)
-  - CNO: `/home/sapurohi/Desktop/Agentic OKD docs/cluster-network-operator.git` (bare, branch: release-4.18)
+  - CVO: `cluster-version-operator.git` (bare, branch: release-4.18)
+  - oc: `oc.git` (bare, branch: release-4.18)
+  - MCO: `machine-config-operator` (non-bare, branch: origin/release-4.18)
+  - API: `api.git` (bare, branch: release-4.18)
+  - CNO: `cluster-network-operator.git` (bare, branch: release-4.18)
 
 ## Evaluation Dimensions
 
@@ -64,7 +64,7 @@ Report: total verifiable items, correct count, incorrect count, with details.
 
 ## Output Format
 
-Write your full evaluation to `/home/sapurohi/Desktop/Agentic OKD docs/eval/dataset/cases/updating/case-4.18/llm-eval-results.md`
+Write your full evaluation to `eval/dataset/cases/updating/case-4.18/llm-eval-results.md`
 
 Structure:
 ```

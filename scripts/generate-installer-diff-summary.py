@@ -11,8 +11,11 @@ import re
 import os
 import sys
 
-INSTALLER_REPO = "/home/sapurohi/Desktop/Agentic OKD docs/installer"
-DIFFS_ROOT = "/home/sapurohi/Desktop/Agentic OKD docs/diffs/installing"
+from pathlib import Path
+
+_BASE_DIR = Path(__file__).resolve().parent.parent
+INSTALLER_REPO = str(_BASE_DIR / "installer")
+DIFFS_ROOT = str(_BASE_DIR / "diffs" / "installing")
 
 DOC_RELEVANT_PATHS = [
     "pkg/types/",

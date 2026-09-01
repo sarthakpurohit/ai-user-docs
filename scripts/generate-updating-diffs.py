@@ -15,7 +15,7 @@ import subprocess
 import os
 from pathlib import Path
 
-WORKSPACE = Path("/home/sapurohi/Desktop/Agentic OKD docs")
+WORKSPACE = Path(__file__).resolve().parent.parent
 DIFFS_ROOT = WORKSPACE / "diffs" / "updating"
 
 REPOS = {

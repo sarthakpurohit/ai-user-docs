@@ -18,7 +18,7 @@ import http.server
 from pathlib import Path
 from urllib.parse import urlparse, parse_qs, quote
 
-BASE_DIR = Path("/home/sapurohi/Desktop/Agentic OKD docs")
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 ATTRIBUTES = {
     'product-title': 'OpenShift Container Platform',

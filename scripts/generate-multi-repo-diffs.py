@@ -9,7 +9,7 @@ import re
 import os
 from pathlib import Path
 
-BASE_DIR = Path("/home/sapurohi/Desktop/Agentic OKD docs")
+BASE_DIR = Path(__file__).resolve().parent.parent
 DIFFS_ROOT = BASE_DIR / "diffs" / "installing"
 
 REPOS = {

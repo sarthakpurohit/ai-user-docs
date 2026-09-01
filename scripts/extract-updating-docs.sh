@@ -4,8 +4,20 @@
 
 set -e
 
-DOCS_REPO="/home/sapurohi/Desktop/Agentic OKD docs/phase0-pipeline/_upstream/openshift-docs"
-CORPUS_BASE="/home/sapurohi/Desktop/Agentic OKD docs/docs-corpus/ocp"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+BASE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+DOCS_REPO="${BASE_DIR}/_repos/openshift-docs"
+CORPUS_BASE="${BASE_DIR}/docs-corpus/ocp"
+
+if [ ! -d "$DOCS_REPO/.git" ]; then
+    echo "openshift-docs repo not found at ${DOCS_REPO}"
+    echo "Cloning (bare checkout, this may take a few minutes)..."
+    mkdir -p "$(dirname "$DOCS_REPO")"
+    git clone --no-checkout https://github.com/openshift/openshift-docs.git "$DOCS_REPO"
+fi
+
+echo "Fetching latest branches..."
+(cd "$DOCS_REPO" && git fetch --all --prune 2>/dev/null) || true
 
 VERSIONS="4.16 4.17 4.18 4.19 4.20 4.21 4.22"
 

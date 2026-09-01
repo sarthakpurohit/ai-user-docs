@@ -8,6 +8,9 @@ machine-config-operator/
 machine-api-operator/
 operator-user-docs/
 
+# Auto-cloned docs repo (created by make extract)
+_repos/
+
 # Extracted docs corpus (regenerate with: make extract)
 docs-corpus/
 

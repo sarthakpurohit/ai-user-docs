@@ -30,7 +30,7 @@ import webbrowser
 from pathlib import Path
 from urllib.parse import urlparse, parse_qs
 
-BASE_DIR = Path("/home/sapurohi/Desktop/Agentic OKD docs")
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 def get_prev_version(version):

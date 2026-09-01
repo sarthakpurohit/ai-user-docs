@@ -1,7 +1,46 @@
-.PHONY: compare score enhanced-diffs diffs extract help
+.PHONY: compare score enhanced-diffs diffs extract help init
 
 PORT ?= 9092
 SECTION ?= installing
+
+# Clone all required source repositories.
+#
+# Usage:
+#   make init                         # clone all repos for both sections
+#   make init SECTION=installing      # clone only repos needed for installing
+#   make init SECTION=updating        # clone only repos needed for updating
+#
+# Source repos are cloned into the project root (bare repos as *.git,
+# non-bare repos as directories). openshift-docs is cloned by `make extract`.
+init:
+	@echo "=== Cloning source repositories ==="
+ifeq ($(SECTION),updating)
+	@[ -d cluster-version-operator.git ] || git clone --bare https://github.com/openshift/cluster-version-operator.git
+	@[ -d oc.git ]                       || git clone --bare https://github.com/openshift/oc.git
+	@[ -d machine-config-operator ]      || git clone https://github.com/openshift/machine-config-operator
+	@[ -d api.git ]                      || git clone --bare https://github.com/openshift/api.git
+	@[ -d cluster-network-operator.git ] || git clone --bare https://github.com/openshift/cluster-network-operator.git
+else ifeq ($(SECTION),installing)
+	@[ -d installer ]                    || git clone https://github.com/openshift/installer
+	@[ -d api.git ]                      || git clone --bare https://github.com/openshift/api.git
+	@[ -d baremetal-operator.git ]       || git clone --bare https://github.com/openshift/baremetal-operator.git
+	@[ -d assisted-installer.git ]       || git clone --bare https://github.com/openshift/assisted-installer.git
+	@[ -d cluster-network-operator.git ] || git clone --bare https://github.com/openshift/cluster-network-operator.git
+	@[ -d machine-config-operator ]      || git clone https://github.com/openshift/machine-config-operator
+	@[ -d machine-api-operator ]         || git clone https://github.com/openshift/machine-api-operator
+else
+	@echo "Cloning all repos..."
+	@[ -d installer ]                    || git clone https://github.com/openshift/installer
+	@[ -d api.git ]                      || git clone --bare https://github.com/openshift/api.git
+	@[ -d baremetal-operator.git ]       || git clone --bare https://github.com/openshift/baremetal-operator.git
+	@[ -d assisted-installer.git ]       || git clone --bare https://github.com/openshift/assisted-installer.git
+	@[ -d cluster-network-operator.git ] || git clone --bare https://github.com/openshift/cluster-network-operator.git
+	@[ -d machine-config-operator ]      || git clone https://github.com/openshift/machine-config-operator
+	@[ -d machine-api-operator ]         || git clone https://github.com/openshift/machine-api-operator
+	@[ -d cluster-version-operator.git ] || git clone --bare https://github.com/openshift/cluster-version-operator.git
+	@[ -d oc.git ]                       || git clone --bare https://github.com/openshift/oc.git
+endif
+	@echo "Done. Source repos ready."
 
 # Launch the docs comparison viewer.
 #
@@ -106,6 +145,12 @@ endif
 help:
 	@echo "Available targets:"
 	@echo ""
+	@echo "  make init [SECTION=installing|updating]"
+	@echo "    Clone required source repositories (run this first)"
+	@echo ""
+	@echo "  make extract SECTION=installing|updating"
+	@echo "    Extract docs from openshift-docs repo (auto-clones if needed)"
+	@echo ""
 	@echo "  make compare VERSION=4.17 [SECTION=installing|updating] [PORT=9092]"
 	@echo "    Launch the HTML comparison viewer"
 	@echo ""
@@ -119,9 +164,6 @@ help:
 	@echo ""
 	@echo "  make updating-diffs"
 	@echo "    Generate diffs for all updating version pairs"
-	@echo ""
-	@echo "  make extract SECTION=installing|updating"
-	@echo "    Extract docs from openshift-docs repo"
 	@echo ""
 	@echo "  make train SECTION=installing|updating [VERSION=4.17]"
 	@echo "    Run the training loop (baseline copy + evaluate)"

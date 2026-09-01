@@ -63,25 +63,17 @@ Each section was trained over 6 iterations (versions 4.17 through 4.22), with th
 
 ### 1. Clone source repositories
 
-The diff generation scripts expect bare clones of the relevant OpenShift source repos:
-
 ```bash
-# For the installing section
-git clone --bare https://github.com/openshift/installer.git
-git clone --bare https://github.com/openshift/api.git
-git clone --bare https://github.com/openshift/baremetal-operator.git
-git clone --bare https://github.com/openshift/assisted-installer.git
-git clone --bare https://github.com/openshift/cluster-network-operator.git
-git clone https://github.com/openshift/machine-config-operator
-git clone https://github.com/openshift/machine-api-operator
-
-# For the updating section
-git clone --bare https://github.com/openshift/cluster-version-operator.git
-git clone --bare https://github.com/openshift/oc.git
-# machine-config-operator is shared with installing
+make init                        # all repos for both sections
+make init SECTION=installing     # only repos for installing section
+make init SECTION=updating       # only repos for updating section
 ```
 
+This clones the OpenShift source repos needed for code diff generation into the project root.
+
 ### 2. Extract docs corpus
+
+The `openshift/openshift-docs` repo is automatically cloned on first run.
 
 ```bash
 make extract SECTION=installing
