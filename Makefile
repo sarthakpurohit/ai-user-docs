@@ -1,4 +1,4 @@
-.PHONY: compare score enhanced-diffs diffs extract help init
+.PHONY: compare score enhanced-diffs updating-diffs diffs extract help init
 
 PORT ?= 9092
 SECTION ?= installing
@@ -111,6 +111,43 @@ endif
 updating-diffs:
 	@python3 scripts/generate-updating-diffs.py
 
+# Generate ALL diffs for both sections and all version pairs (4.16→4.22).
+#
+# Usage:
+#   make diffs                          # both sections, all versions
+#   make diffs SECTION=installing       # installing only
+#   make diffs SECTION=updating         # updating only
+#
+# This is the recommended way to regenerate diffs after a fresh clone.
+# Requires source repos (run `make init` first).
+diffs:
+ifeq ($(SECTION),installing)
+	@echo "=== Generating installing diffs (4.16 → 4.22) ==="
+	@for pair in "4.16 4.17" "4.17 4.18" "4.18 4.19" "4.19 4.20" "4.20 4.21" "4.21 4.22"; do \
+		set -- $$pair; \
+		echo ""; echo "--- Installing: $$1 → $$2 ---"; \
+		python3 scripts/generate-enhanced-diffs.py $$1 $$2; \
+	done
+	@echo ""; echo "=== Installing diffs complete ==="
+else ifeq ($(SECTION),updating)
+	@echo "=== Generating updating diffs (4.16 → 4.22) ==="
+	@python3 scripts/generate-updating-diffs.py
+	@echo ""; echo "=== Updating diffs complete ==="
+else
+	@echo "=== Generating ALL diffs for both sections (4.16 → 4.22) ==="
+	@echo ""
+	@echo "--- Installing section ---"
+	@for pair in "4.16 4.17" "4.17 4.18" "4.18 4.19" "4.19 4.20" "4.20 4.21" "4.21 4.22"; do \
+		set -- $$pair; \
+		echo ""; echo "--- Installing: $$1 → $$2 ---"; \
+		python3 scripts/generate-enhanced-diffs.py $$1 $$2; \
+	done
+	@echo ""
+	@echo "--- Updating section ---"
+	@python3 scripts/generate-updating-diffs.py
+	@echo ""; echo "=== All diffs complete ==="
+endif
+
 # Extract docs for a section from openshift-docs.
 #
 # Usage:
@@ -151,6 +188,16 @@ help:
 	@echo "  make extract SECTION=installing|updating"
 	@echo "    Extract docs from openshift-docs repo (auto-clones if needed)"
 	@echo ""
+	@echo "  make diffs [SECTION=installing|updating]"
+	@echo "    Generate ALL code diffs for both sections, all versions (4.16-4.22)"
+	@echo "    Requires source repos (run 'make init' first)"
+	@echo ""
+	@echo "  make enhanced-diffs FROM=4.16 TO=4.17"
+	@echo "    Generate enhanced diffs for a single installing version pair"
+	@echo ""
+	@echo "  make updating-diffs"
+	@echo "    Generate diffs for all updating version pairs"
+	@echo ""
 	@echo "  make compare VERSION=4.17 [SECTION=installing|updating] [PORT=9092]"
 	@echo "    Launch the HTML comparison viewer"
 	@echo ""
@@ -158,12 +205,6 @@ help:
 	@echo "    Run deterministic scoring (difflib, file/section/param coverage)"
 	@echo "    NOTE: This is NOT the LLM evaluation. For that, use prompts in"
 	@echo "          tmp/ or tmp-updating/ in a separate agent window."
-	@echo ""
-	@echo "  make enhanced-diffs FROM=4.16 TO=4.17"
-	@echo "    Generate enhanced diffs for installing section"
-	@echo ""
-	@echo "  make updating-diffs"
-	@echo "    Generate diffs for all updating version pairs"
 	@echo ""
 	@echo "  make train SECTION=installing|updating [VERSION=4.17]"
 	@echo "    Run the training loop (baseline copy + evaluate)"

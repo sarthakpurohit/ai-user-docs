@@ -17,6 +17,9 @@ docs-corpus/
 # Code diffs (contain upstream test fixture credentials, regenerate with: make diffs)
 diffs/
 
+# Demo artifacts (local only, regenerable)
+demo-artifacts/
+
 # Large generated artifacts (regenerable via make)
 eval/dataset/
 comparison/

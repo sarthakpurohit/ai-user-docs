@@ -37,14 +37,22 @@ Each section was trained over 6 iterations (versions 4.17 through 4.22), with th
 
 ## View the Results (No LLM Needed)
 
-Want to see how AI-generated docs compare to human-written ones? The repo includes all generated output for both sections. You just need to extract the ground-truth docs and launch the viewer.
+Want to see how AI-generated docs compare to human-written ones? The repo includes all generated output for both sections. You just need to extract the ground-truth docs, generate the code diffs, and launch the viewer.
 
 ### Prerequisites
 
 - Python 3.9+
 - Git
 
-### Step 1: Extract the ground-truth docs
+### Step 1: Clone source repositories
+
+This pulls the upstream OpenShift code repos used for diff generation (~5 min first time):
+
+```bash
+make init
+```
+
+### Step 2: Extract the ground-truth docs
 
 This pulls the official docs from `openshift/openshift-docs` (auto-clones the repo on first run, ~2 min):
 
@@ -54,7 +62,7 @@ make extract SECTION=installing
 
 This creates `docs-corpus/ocp/4.16/installing/`, `docs-corpus/ocp/4.17/installing/`, etc.
 
-### Step 2: Launch the comparison viewer
+### Step 3: Launch the comparison viewer
 
 Pick any version from 4.17 to 4.22:
 
@@ -72,7 +80,7 @@ This opens a browser at `http://localhost:9092` with a 3-panel view:
 
 Switch to the **Diff** tab to see GitHub-style line-by-line highlighting of what changed from the baseline in both the human and AI versions.
 
-### Step 3: Try other versions or sections
+### Step 4: Try other versions or sections
 
 ```bash
 make compare VERSION=4.20 SECTION=installing
@@ -105,8 +113,16 @@ make extract SECTION=updating
 ### 3. Generate code diffs
 
 ```bash
-make enhanced-diffs FROM=4.16 TO=4.17    # installing (enhanced with full type files)
-make updating-diffs                       # updating (all version pairs)
+make diffs                          # both sections, all versions (4.16→4.22)
+make diffs SECTION=installing       # installing only
+make diffs SECTION=updating         # updating only
+```
+
+Or generate individual pairs:
+
+```bash
+make enhanced-diffs FROM=4.16 TO=4.17    # single installing pair
+make updating-diffs                       # all updating pairs
 ```
 
 ### 4. Run deterministic scoring
@@ -134,7 +150,6 @@ For LLM-based generation and evaluation, use the prompt files in `tmp/` (install
 │   ├── generate-updating-docs/  # Updating section skill (28 rules)
 │   └── snapshots/               # Historical skill versions per iteration
 ├── scripts/                     # Diff generation, evaluation, HTML viewer
-├── diffs/                       # Structured code diff summaries per version
 ├── generated/                   # AI-generated documentation output
 │   ├── installing/              # Versions 4.17-4.22
 │   └── updating/                # Versions 4.17-4.22
@@ -143,9 +158,10 @@ For LLM-based generation and evaluation, use the prompt files in `tmp/` (install
 ├── presentation/                # Project overview (open in browser)
 ├── tmp/                         # Generation & evaluation prompts (installing)
 ├── tmp-updating/                # Generation & evaluation prompts (updating)
-├── demo-artifacts/              # Preserved demo data
 └── Makefile                     # All commands (run `make help`)
 ```
+
+> **Note:** `diffs/` and `docs-corpus/` are gitignored (regenerable artifacts). Run `make diffs` and `make extract` to create them locally.
 
 ## Evaluation Metrics
 
