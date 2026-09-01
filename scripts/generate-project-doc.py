@@ -85,8 +85,12 @@ p.add_run(
 p = doc.add_paragraph()
 p.add_run('RESULTS: ').bold = True
 p.add_run(
-    '94 to 97% text similarity to human-written docs on stable releases. '
-    'Trained on 2 documentation sections (Installing, Updating) across 6 version iterations (4.17 through 4.22).'
+    'Trained on 2 documentation sections (Installing, Updating) across 6 version iterations '
+    '(4.17 through 4.22). On stable releases, the pipeline produces first drafts that are structurally '
+    'complete (95% file and section coverage) and semantically accurate (93% by LLM judge). '
+    'Completeness of new changes, the hardest metric, reached 81% for installing after enhanced diffs, '
+    'up from 46% with basic diffs. The remaining gap comes from changes invisible in code: '
+    'product decisions, non-monitored repos, and editorial restructuring.'
 )
 
 p = doc.add_paragraph()
@@ -386,6 +390,16 @@ p.add_run('94.8%')
 
 doc.add_paragraph()
 doc.add_paragraph(
+    'Important context: text similarity is naturally high because most files carry forward unchanged '
+    'between releases. In a typical version, only 10 to 15 files out of 800+ have meaningful changes. '
+    'Those unchanged files score 100%, which pulls the average up. '
+    'Text similarity is useful for detecting regressions (files that should not have changed), '
+    'but it does not measure how well the pipeline handles actual changes. '
+    'For that, we use LLM evaluation.'
+)
+
+doc.add_paragraph()
+doc.add_paragraph(
     'Version 4.20 is an outlier because the docs team restructured the Installing section that release, '
     'reorganizing files into new subdirectories. Since this was an editorial decision not visible in code, '
     'the AI could not anticipate it.'
@@ -470,18 +484,21 @@ add_table(
         ['Files per version', '800 to 1000', '104 to 115'],
         ['Source repos monitored', '7', '5'],
         ['Avg text similarity (excl 4.20)', '94.8%', '96.5%'],
-        ['Best text similarity', '96.4% (4.19, 4.21)', '98.8% (4.21)'],
-        ['Worst version (4.20)', '83.2%', '79.3%'],
+        ['LLM semantic accuracy (4.17)', '92.7%', '80.8%'],
+        ['LLM completeness (4.17, enhanced)', '80.8%', '48 to 62%'],
+        ['Worst version (4.20 restructure)', '83.2%', '79.3%'],
         ['Nature of content', 'Code-heavy (Go structs, CRDs)', 'Procedural (CLI, workflows)'],
     ]
 )
 
 doc.add_paragraph()
 doc.add_paragraph(
-    'The approach works across both section types. Deterministic scores are comparable, '
-    'around 95 to 97% on stable releases. The LLM evaluation gap between sections reflects '
-    'the nature of the content: installing docs are heavily code-derived (Go structs, CRDs), '
-    'so the LLM covers most changes. Updating docs depend more on product decisions that are invisible in code.'
+    'The approach works across both section types. Text similarity is high (around 95%) because '
+    'most files carry forward unchanged and score 100%. The real measure of quality is how well the '
+    'pipeline handles the 10 to 15 files that actually need changes each release. '
+    'LLM completeness, which grades whether each code change is reflected in the generated docs, '
+    'reached 81% for installing. Updating completeness is lower because those docs depend heavily '
+    'on product decisions, CLI output changes, and deprecation notices that are not always visible in code.'
 )
 
 # ============================================================
