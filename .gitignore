@@ -14,6 +14,9 @@ _repos/
 # Extracted docs corpus (regenerate with: make extract)
 docs-corpus/
 
+# Code diffs (contain upstream test fixture credentials, regenerate with: make diffs)
+diffs/
+
 # Large generated artifacts (regenerable via make)
 eval/dataset/
 comparison/
