@@ -114,14 +114,19 @@ updating-diffs:
 # Generate ALL diffs for both sections and all version pairs (4.16→4.22).
 #
 # Usage:
-#   make diffs                          # both sections, all versions
-#   make diffs SECTION=installing       # installing only
-#   make diffs SECTION=updating         # updating only
+#   make diffs                                        # both sections, all versions
+#   make diffs SECTION=installing                     # installing only, all versions
+#   make diffs SECTION=updating                       # updating only, all versions
+#   make diffs SECTION=installing FROM=4.16 TO=4.17   # single version pair
 #
 # This is the recommended way to regenerate diffs after a fresh clone.
 # Requires source repos (run `make init` first).
 diffs:
 ifeq ($(SECTION),installing)
+ifdef FROM
+	@echo "=== Generating installing diff: $(FROM) → $(TO) ==="
+	@python3 scripts/generate-enhanced-diffs.py $(FROM) $(TO)
+else
 	@echo "=== Generating installing diffs (4.16 → 4.22) ==="
 	@for pair in "4.16 4.17" "4.17 4.18" "4.18 4.19" "4.19 4.20" "4.20 4.21" "4.21 4.22"; do \
 		set -- $$pair; \
@@ -129,6 +134,7 @@ ifeq ($(SECTION),installing)
 		python3 scripts/generate-enhanced-diffs.py $$1 $$2; \
 	done
 	@echo ""; echo "=== Installing diffs complete ==="
+endif
 else ifeq ($(SECTION),updating)
 	@echo "=== Generating updating diffs (4.16 → 4.22) ==="
 	@python3 scripts/generate-updating-diffs.py
@@ -193,15 +199,10 @@ help:
 	@echo "    Extract docs from openshift-docs repo (auto-clones if needed)"
 	@echo "    Defaults to both sections if SECTION is not specified"
 	@echo ""
-	@echo "  make diffs [SECTION=installing|updating]"
-	@echo "    Generate ALL code diffs for both sections, all versions (4.16-4.22)"
+	@echo "  make diffs [SECTION=installing|updating] [FROM=4.16 TO=4.17]"
+	@echo "    Generate code diffs for both sections, all versions (4.16-4.22)"
+	@echo "    Use FROM/TO for a single version pair (installing only)"
 	@echo "    Requires source repos (run 'make init' first)"
-	@echo ""
-	@echo "  make enhanced-diffs FROM=4.16 TO=4.17"
-	@echo "    Generate enhanced diffs for a single installing version pair"
-	@echo ""
-	@echo "  make updating-diffs"
-	@echo "    Generate diffs for all updating version pairs"
 	@echo ""
 	@echo "  make compare VERSION=4.17 [SECTION=installing|updating] [PORT=9092]"
 	@echo "    Launch the HTML comparison viewer"

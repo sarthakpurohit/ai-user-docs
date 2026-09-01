@@ -120,11 +120,10 @@ make diffs SECTION=installing       # installing only
 make diffs SECTION=updating         # updating only
 ```
 
-Or generate individual pairs:
+Or generate a single version pair:
 
 ```bash
-make enhanced-diffs FROM=4.16 TO=4.17    # single installing pair
-make updating-diffs                       # all updating pairs
+make diffs SECTION=installing FROM=4.16 TO=4.17
 ```
 
 ### 4. Run deterministic scoring
