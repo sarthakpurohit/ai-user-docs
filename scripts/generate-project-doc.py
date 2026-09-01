@@ -590,6 +590,27 @@ p.add_run(
     'without changing the core formula.'
 )
 
+doc.add_heading('Enhancement Proposals (EPs) as additional context', level=2)
+
+doc.add_paragraph(
+    'OpenShift Enhancement Proposals describe planned features, design decisions, and scope before code '
+    'lands. They can supplement both JIRA and code diffs for changes that originate outside of code.'
+)
+
+doc.add_paragraph(
+    'A concrete example: in the 4.17 generation of the Installing section, multi-arch support changes '
+    'were missed entirely. There was no visible code diff in any of the 7 monitored repos. '
+    'However, an Enhancement Proposal clearly described the feature, its scope, and what documentation '
+    'was needed. Feeding EPs for a target release would give the LLM exactly this kind of context, '
+    'allowing it to create documentation for features that are planned but not yet reflected in code changes.'
+)
+
+doc.add_paragraph(
+    'Other extensions that could further improve accuracy: adding more source repos as gaps are '
+    'discovered (we went from 3 to 7 during training for installing), and using PR release-note blocks '
+    'which contain human-written summaries of user-facing changes.'
+)
+
 # ============================================================
 # 10. PRODUCTION READINESS
 # ============================================================

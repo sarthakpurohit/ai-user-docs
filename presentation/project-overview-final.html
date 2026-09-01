@@ -590,7 +590,11 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 
 <div class="card">
   <div class="card-header">Other Potential Extensions</div>
-  <div class="grid-2">
+  <div class="grid-3">
+    <div>
+      <strong>Enhancement Proposals (EPs)</strong>
+      <p>OpenShift Enhancement Proposals describe planned features, design decisions, and scope before code lands. For example, multi-arch support changes in 4.17 had no visible code diff in the repos we monitor, but the EP clearly described the feature and its documentation needs. Feeding EPs for a release gives the LLM context for changes that originate outside of code.</p>
+    </div>
     <div>
       <strong>More source repos</strong>
       <p>Adding repos as we discover gaps. We went from 3 → 7 for installing and 3 → 5 for updating during training. This can continue as needed.</p>
