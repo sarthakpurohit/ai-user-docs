@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OKD Docs AI Generation — Iterative Skill Training Results</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2128;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --accent: #58a6ff;
+  --green: #3fb950;
+  --yellow: #d29922;
+  --red: #f85149;
+  --purple: #bc8cff;
+  --orange: #f0883e;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 40px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+h1 { font-size: 2.2rem; margin-bottom: 8px; font-weight: 700; }
+h2 { font-size: 1.5rem; margin: 48px 0 16px; font-weight: 600; color: var(--accent); }
+h3 { font-size: 1.1rem; margin: 20px 0 8px; font-weight: 600; }
+h4 { font-size: 0.95rem; margin: 12px 0 6px; color: var(--text2); font-weight: 600; }
+p { color: var(--text2); margin-bottom: 12px; }
+ul, ol { color: var(--text2); padding-left: 24px; margin-bottom: 12px; }
+li { margin: 4px 0; }
+code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: var(--accent);
+}
+.subtitle { color: var(--text2); font-size: 1.1rem; margin-bottom: 32px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.card-header {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+}
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+.grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+@media (max-width: 768px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+.pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.pill-red { background: #f8514922; color: var(--red); }
+.pill-yellow { background: #d2992222; color: var(--yellow); }
+.pill-blue { background: #58a6ff22; color: var(--accent); }
+.pill-green { background: #3fb95022; color: var(--green); }
+.pill-purple { background: #bc8cff22; color: var(--purple); }
+.pill-orange { background: #f0883e22; color: var(--orange); }
+
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+.stat-value { font-size: 2rem; font-weight: 700; color: var(--green); }
+.stat-value.blue { color: var(--accent); }
+.stat-value.yellow { color: var(--yellow); }
+.stat-value.purple { color: var(--purple); }
+.stat-value.orange { color: var(--orange); }
+.stat-label { font-size: 0.85rem; color: var(--text2); margin-top: 4px; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin: 16px 0;
+}
+th {
+  text-align: left;
+  padding: 12px 16px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+  font-weight: 600;
+}
+td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+tr:nth-child(even) td { background: var(--surface2); }
+tr.highlight td { background: #d2992215; }
+
+.callout {
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  padding: 16px 20px;
+  border-radius: 0 8px 8px 0;
+  margin: 20px 0;
+}
+.callout.warning { border-left-color: var(--yellow); }
+.callout.success { border-left-color: var(--green); }
+.callout.danger { border-left-color: var(--red); }
+.callout p { margin-bottom: 0; }
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 40px 0;
+}
+
+.formula {
+  text-align: center;
+  padding: 24px;
+  margin: 16px 0;
+}
+.formula-main {
+  font-size: 1.6rem;
+  font-weight: 700;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: var(--text);
+}
+.formula-main .var { color: var(--accent); }
+.formula-main .op { color: var(--text2); padding: 0 8px; }
+.formula-main .fn { color: var(--green); }
+.formula-sub {
+  font-size: 0.9rem;
+  color: var(--text2);
+  margin-top: 8px;
+}
+
+.flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 20px 0;
+  flex-wrap: wrap;
+}
+.flow-node {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 20px;
+  text-align: center;
+  min-width: 130px;
+}
+.flow-node.accent { border-color: var(--accent); background: #58a6ff11; }
+.flow-node.green { border-color: var(--green); background: #3fb95011; }
+.flow-node.yellow { border-color: var(--yellow); background: #d2992211; }
+.flow-node.purple { border-color: var(--purple); background: #bc8cff11; }
+.flow-node.red { border-color: var(--red); background: #f8514911; }
+.flow-node-label { font-size: 0.75rem; color: var(--text2); margin-bottom: 4px; }
+.flow-node-value { font-weight: 600; font-size: 0.9rem; }
+.flow-arrow { font-size: 1.4rem; color: var(--text2); padding: 0 10px; }
+
+.diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
+  margin: 24px 0;
+  overflow-x: auto;
+}
+
+.skill-timeline {
+  position: relative;
+  padding-left: 24px;
+  border-left: 2px solid var(--border);
+  margin: 20px 0;
+}
+.skill-point {
+  position: relative;
+  padding: 12px 0 24px 24px;
+}
+.skill-point::before {
+  content: '';
+  position: absolute;
+  left: -30px;
+  top: 16px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+}
+.skill-point.green::before { background: var(--green); }
+.skill-point.yellow::before { background: var(--yellow); }
+.skill-point.purple::before { background: var(--purple); }
+.skill-point-version { font-weight: 600; color: var(--accent); margin-bottom: 4px; }
+.skill-point-text { color: var(--text2); font-size: 0.9rem; }
+
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  height: 180px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+  margin: 16px 0;
+}
+.bar-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+.bar {
+  width: 36px;
+  background: var(--accent);
+  border-radius: 4px 4px 0 0;
+  position: relative;
+}
+.bar.green { background: var(--green); }
+.bar.yellow { background: var(--yellow); }
+.bar.red { background: var(--red); }
+.bar-label {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+.bar-group .x-label {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--text2);
+}
+
+.metric-explain {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 12px 0;
+}
+.metric-explain .metric-formula {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.85rem;
+  color: var(--green);
+  background: var(--bg);
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin: 8px 0;
+  display: block;
+}
+.metric-explain h4 { color: var(--text); margin-bottom: 8px; }
+
+.toc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px 32px;
+  margin: 24px 0;
+}
+.toc ol { padding-left: 24px; }
+.toc li { margin: 6px 0; color: var(--text2); }
+.toc a { color: var(--accent); text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<h1>Iterative Skill Training for AI Documentation Generation</h1>
+<p class="subtitle">Complete methodology, evaluation metrics, findings, and SKILL.md evolution — OKD Installation Docs POC</p>
+<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px;">
+  <span class="pill pill-red">Red Hat OKD</span>
+  <span class="pill pill-blue">7 Source Repos</span>
+  <span class="pill pill-green">6 Iterations</span>
+  <span class="pill pill-purple">4.16 → 4.22</span>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="card-header">Contents</div>
+  <ol>
+    <li><a href="#problem">Problem & Goals</a></li>
+    <li><a href="#methodology">Methodology — What We Did</a></li>
+    <li><a href="#formula">The Generation Formula</a></li>
+    <li><a href="#code-diff">What "Code Diff" Actually Means</a></li>
+    <li><a href="#training-loop">The Training Loop in Detail</a></li>
+    <li><a href="#metrics">Evaluation Metrics — How They're Measured</a></li>
+    <li><a href="#results">Results Across All Iterations</a></li>
+    <li><a href="#skill-evolution">SKILL.md Evolution</a></li>
+    <li><a href="#findings">Key Findings & Interpretations</a></li>
+    <li><a href="#limitations">Limitations & Accuracy Ceiling</a></li>
+    <li><a href="#next-steps">Next Steps</a></li>
+  </ol>
+</div>
+
+<hr>
+
+<!-- 1. Problem -->
+<h2 id="problem">1. Problem & Goals</h2>
+<div class="card">
+  <div class="card-header">Why This Exists</div>
+  <p>The central docs team is withdrawing OKD documentation support. After their departure, there will be <strong style="color:var(--text)">no human writers</strong> maintaining installation documentation for OKD releases.</p>
+  <p>We need an AI system that can automatically generate accurate user-facing docs for each new version (4.23+), using only source code changes as input.</p>
+  <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
+    <span class="pill pill-red">No human docs writers for future versions</span>
+    <span class="pill pill-yellow">~950 AsciiDoc files per version</span>
+    <span class="pill pill-blue">Changes span 7+ repositories</span>
+    <span class="pill pill-purple">Must match existing doc conventions exactly</span>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">POC Scope</div>
+  <p>Focus on the <strong style="color:var(--text)">installation section</strong> of documentation only. If successful, expand to networking, storage, operators, etc.</p>
+  <p>Use OpenShift 4.16 → 4.22 as training data (ground truth exists). Deploy on 4.23 where no ground truth will exist.</p>
+</div>
+
+<hr>
+
+<!-- 2. Methodology -->
+<h2 id="methodology">2. Methodology — What We Did</h2>
+
+<div class="card">
+  <div class="card-header">Step-by-Step Process</div>
+  <ol style="padding-left: 24px;">
+    <li style="margin: 8px 0;"><strong style="color:var(--text)">Extracted installation docs</strong> for OCP/OKD versions 4.16 through 4.22 from <code>openshift/openshift-docs</code> (branch <code>enterprise-4.XX</code>)</li>
+    <li style="margin: 8px 0;"><strong style="color:var(--text)">Cloned 7 source repositories</strong> that contribute to installation features</li>
+    <li style="margin: 8px 0;"><strong style="color:var(--text)">Generated structured multi-repo diffs</strong> between consecutive release branches (e.g., <code>release-4.17</code> → <code>release-4.18</code>)</li>
+    <li style="margin: 8px 0;"><strong style="color:var(--text)">Created SKILL.md</strong> — an instruction file teaching the LLM how to transform code changes into doc updates</li>
+    <li style="margin: 8px 0;"><strong style="color:var(--text)">For each version pair:</strong> Generated docs using only previous docs + code diff + skill, then compared against actual docs</li>
+    <li style="margin: 8px 0;"><strong style="color:var(--text)">Updated SKILL.md</strong> with lessons learned from each evaluation, creating versioned snapshots</li>
+  </ol>
+</div>
+
+<h3>Source Repositories</h3>
+<table>
+  <tr><th>Repository</th><th>Role in Installation Docs</th><th>Avg Diff Size</th></tr>
+  <tr><td><code>openshift/installer</code></td><td>Install-config structs, platforms, CLI, UPI templates</td><td>~550 lines</td></tr>
+  <tr><td><code>openshift/api</code></td><td>Feature gates, capabilities, CRD schemas, API types</td><td>~800 lines</td></tr>
+  <tr><td><code>openshift/baremetal-operator</code></td><td>BMO features, host firmware, provisioning</td><td>~850 lines</td></tr>
+  <tr><td><code>openshift/assisted-installer</code></td><td>Agent-based installer flows, validations</td><td>~250 lines</td></tr>
+  <tr><td><code>openshift/cluster-network-operator</code></td><td>Network config, IPsec, OVN-Kubernetes</td><td>~420 lines</td></tr>
+  <tr><td><code>openshift/machine-config-operator</code></td><td>Node OS config, MCO, boot images</td><td>~620 lines</td></tr>
+  <tr><td><code>openshift/machine-api-operator</code></td><td>Machine management, CAPI integration</td><td>~450 lines</td></tr>
+</table>
+
+<div class="grid-4">
+  <div class="stat"><div class="stat-value blue">~200KB</div><div class="stat-label">Avg combined diff per version</div></div>
+  <div class="stat"><div class="stat-value">~950</div><div class="stat-label">AsciiDoc files per version</div></div>
+  <div class="stat"><div class="stat-value purple">515</div><div class="stat-label">Final SKILL.md lines</div></div>
+  <div class="stat"><div class="stat-value yellow">6</div><div class="stat-label">Snapshots saved</div></div>
+</div>
+
+<hr>
+
+<!-- 3. Formula -->
+<h2 id="formula">3. The Generation Formula</h2>
+
+<div class="diagram">
+  <div class="formula">
+    <div class="formula-main">
+      <span class="fn">Docs</span>(<span class="var">4.x</span>)<span class="op">=</span><span class="fn">LLM</span>(<span class="var">Docs(4.x-1)</span><span class="op">+</span><span class="var">Diff(4.x-1→4.x)</span><span class="op">+</span><span class="var">SKILL.md</span>)
+    </div>
+    <div class="formula-sub">Where SKILL.md encodes documentation conventions, AsciiDoc rules, and lessons from past iterations</div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header" style="color:var(--accent);">Inputs</div>
+    <ul>
+      <li><strong style="color:var(--text)">Docs(4.x-1):</strong> Complete installation docs from previous version (~950 files)</li>
+      <li><strong style="color:var(--text)">Diff:</strong> Structured summary from 7 repos — new/deleted/modified files, key code changes, commit messages</li>
+      <li><strong style="color:var(--text)">SKILL.md:</strong> 5-phase process: Analyze → Generate → Format → Validate → Summarize</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-header" style="color:var(--green);">Outputs</div>
+    <ul>
+      <li><strong style="color:var(--text)">Generated docs:</strong> Updated AsciiDoc files for version 4.x</li>
+      <li><strong style="color:var(--text)">Evaluation report:</strong> Per-file metrics vs ground truth</li>
+      <li><strong style="color:var(--text)">Updated SKILL.md:</strong> Refined with new lessons</li>
+    </ul>
+  </div>
+</div>
+
+<div class="callout success">
+  <p><strong style="color:var(--green)">Core insight:</strong> ~95-98% of documentation is unchanged between minor versions. We exploit this by starting from the previous version and only modifying what the code diff requires.</p>
+</div>
+
+<hr>
+
+<!-- 3b. What is Code Diff -->
+<h2 id="code-diff">3b. What "Code Diff" Actually Means</h2>
+
+<div class="callout warning">
+  <p><strong style="color:var(--yellow)">Important clarification:</strong> "Code diff" in our project does NOT mean the raw line-by-line <code>git diff</code> output. It's a <strong style="color:var(--text)">structured, filtered, summarized</strong> extract of only documentation-relevant changes.</p>
+</div>
+
+<div class="card">
+  <div class="card-header">Why not use raw git diff?</div>
+  <p>A raw <code>git diff</code> between <code>release-4.17</code> and <code>release-4.18</code> across 7 repos produces <strong style="color:var(--text)">50,000+ lines</strong> of output — far too much noise for an LLM. Most of it is implementation details, test fixtures, and vendor dependencies irrelevant to user-facing documentation.</p>
+  <p>Instead, we extract a <strong style="color:var(--text)">~200KB structured summary (~4000 lines)</strong> containing only what matters for doc generation.</p>
+</div>
+
+<h3>The 5 Components of Our "Code Diff"</h3>
+
+<div class="card">
+  <div class="card-header">① Overview Statistics</div>
+  <div style="background: var(--bg); padding: 12px 16px; border-radius: 6px; font-family: 'SF Mono', monospace; font-size: 0.85rem; color: var(--text2); margin: 8px 0;">
+    - New files: 17<br>
+    - Deleted files: 2<br>
+    - Modified files: 97<br>
+    - Total commits: 40
+  </div>
+  <p>Tells the LLM the <em>scale</em> of change. Many new files = likely new features needing new doc modules.</p>
+</div>
+
+<div class="card">
+  <div class="card-header">② Key Code Changes <span class="pill pill-red">Filtered — Not all lines</span></div>
+  <p>This is the critical part. We run <code>git diff -U2</code> but then <strong style="color:var(--text)">filter to only keep lines matching this regex:</strong></p>
+  <div style="background: var(--bg); padding: 12px 16px; border-radius: 6px; font-family: 'SF Mono', monospace; font-size: 0.82rem; color: var(--green); margin: 8px 0;">
+    (type |struct|interface|func |//|json:|yaml:|description|spec\.|status\.)
+  </div>
+  <p>This means we <strong style="color:var(--text)">only keep:</strong></p>
+  <table>
+    <tr><th>Pattern</th><th>What It Captures</th><th>Why It's Doc-Relevant</th></tr>
+    <tr><td><code>type </code> / <code>struct</code></td><td>Go type and struct definitions</td><td>These define install-config fields that become doc parameters</td></tr>
+    <tr><td><code>interface</code></td><td>Go interface changes</td><td>New capabilities or API contracts</td></tr>
+    <tr><td><code>func </code></td><td>Function signatures</td><td>New CLI commands, validators, install steps</td></tr>
+    <tr><td><code>//</code></td><td>Go comments</td><td>Often contain field descriptions that become doc text</td></tr>
+    <tr><td><code>json:</code> / <code>yaml:</code></td><td>Struct field tags</td><td>The actual parameter names users will configure</td></tr>
+    <tr><td><code>description</code></td><td>CRD schema descriptions</td><td>Descriptions written in CRDs often become doc text verbatim</td></tr>
+    <tr><td><code>spec.</code> / <code>status.</code></td><td>API spec/status references</td><td>Maps directly to documented API fields</td></tr>
+  </table>
+  <p style="margin-top: 12px;"><strong style="color:var(--text)">We skip:</strong> implementation details, variable assignments, error handling, test assertions, import statements, vendor code.</p>
+  <p><strong style="color:var(--text)">Additional limits:</strong> Max 40 hunks per file, max 30 files per repo.</p>
+  
+  <h4 style="margin-top: 16px;">Example of what passes the filter:</h4>
+  <div style="background: var(--bg); padding: 12px 16px; border-radius: 6px; font-family: 'SF Mono', monospace; font-size: 0.8rem; margin: 8px 0; overflow-x: auto;">
+    <span style="color:var(--text2)">### `config/v1/types_cluster_version.go`</span><br><br>
+    <span style="color:var(--text2)">@@ -289,5 +289,5 @@ const (</span><br>
+    <span style="color:var(--red)">-// +kubebuilder:validation:Enum=...;CloudControllerManager</span><br>
+    <span style="color:var(--green)">+// +kubebuilder:validation:Enum=...;CloudControllerManager;OperatorLifecycleManagerV1</span><br>
+    <span style="color:var(--text2)">@@ -380,8 +380,12 @@ const (</span><br>
+    <span style="color:var(--red)">-  // ClusterVersionCapabilityOperatorLifecycleManager manages the OLM</span><br>
+    <span style="color:var(--green)">+  // ClusterVersionCapabilityOperatorLifecycleManager manages the OLM (legacy)</span><br>
+    <span style="color:var(--green)">+  // ClusterVersionCapabilityOperatorLifecycleManagerV1 manages the OLM (v1)</span><br>
+  </div>
+  <p style="font-size: 0.85rem;">From this, the LLM knows: "a new capability <code>OperatorLifecycleManagerV1</code> was added → update the capabilities documentation."</p>
+</div>
+
+<div class="card">
+  <div class="card-header">③ New / Deleted File Lists</div>
+  <div style="background: var(--bg); padding: 12px 16px; border-radius: 6px; font-family: 'SF Mono', monospace; font-size: 0.82rem; color: var(--text2); margin: 8px 0;">
+    ## New Files<br>
+    - `docs/user/agent/control-plane-replicas.md`<br>
+    - `docs/user/openstack/observability.md`<br>
+    - `pkg/types/dns/dns.go`<br><br>
+    ## Deleted Files<br>
+    - `pkg/asset/manifests/ovnkubeconfig.go`
+  </div>
+  <p>New files in <code>docs/user/</code> = new user-facing content that might need corresponding AsciiDoc modules. New type files = new parameters to document.</p>
+</div>
+
+<div class="card">
+  <div class="card-header">④ Commit Messages (top 40)</div>
+  <div style="background: var(--bg); padding: 12px 16px; border-radius: 6px; font-family: 'SF Mono', monospace; font-size: 0.82rem; color: var(--text2); margin: 8px 0;">
+    - 51e11f8 azure: Add field in installconfig to disallow shared access key<br>
+    - e2904ef OCPBUGS-77355: fix wavelength zone name regex<br>
+    - 02032864 Refine check for supported SNO platforms<br>
+    - 771b843 Update Control Plane replica validation for SNO
+  </div>
+  <p>Commit messages describe <strong style="color:var(--text)">intent</strong> — they tell the LLM <em>why</em> the change was made, which helps decide <em>what</em> to document.</p>
+</div>
+
+<div class="card">
+  <div class="card-header">⑤ Diffstat</div>
+  <div style="background: var(--bg); padding: 12px 16px; border-radius: 6px; font-family: 'SF Mono', monospace; font-size: 0.82rem; color: var(--text2); margin: 8px 0;">
+    pkg/asset/installconfig/aws/permissions.go | 229 ++++++++-<br>
+    data/data/install.openshift.io_installconfigs.yaml | 175 ++++++-<br>
+    docs/user/openstack/observability.md | 389 +++++++++++++++
+  </div>
+  <p>Shows relative magnitude of changes. A file with <code>+389</code> lines is likely a major new feature; <code>+2</code> is a minor fix.</p>
+</div>
+
+<div class="card">
+  <div class="card-header">Only Doc-Relevant Paths Are Scanned</div>
+  <p>We don't scan entire repositories. Each repo has a configured set of <strong style="color:var(--text)">doc-relevant paths</strong>:</p>
+  <table>
+    <tr><th>Repo</th><th>Paths Scanned</th><th>Paths Ignored</th></tr>
+    <tr><td><code>installer</code></td><td><code>pkg/types/</code>, <code>docs/user/</code>, <code>cmd/openshift-install/</code>, <code>data/data/*.yaml</code>, <code>upi/</code></td><td>vendor/, hack/, images/, terraform/</td></tr>
+    <tr><td><code>api</code></td><td><code>config/</code>, <code>install/</code>, <code>features/</code>, <code>machine/</code>, <code>operator/</code></td><td>vendor/, tools/, staging/</td></tr>
+    <tr><td><code>baremetal-operator</code></td><td><code>apis/</code>, <code>pkg/</code>, <code>docs/</code>, <code>config/</code></td><td>vendor/, hack/, test/</td></tr>
+  </table>
+</div>
+
+<div class="grid-3" style="margin-top: 20px;">
+  <div class="stat"><div class="stat-value yellow">~50K</div><div class="stat-label">Raw git diff lines (discarded)</div></div>
+  <div class="stat"><div class="stat-value">~4K</div><div class="stat-label">Structured summary lines (kept)</div></div>
+  <div class="stat"><div class="stat-value" style="color:var(--accent);">~8%</div><div class="stat-label">Compression ratio</div></div>
+</div>
+
+<hr>
+
+<!-- 4. Training Loop -->
+<h2 id="training-loop">4. The Training Loop in Detail</h2>
+
+<div class="flow">
+  <div class="flow-node accent"><div class="flow-node-label">Step 1</div><div class="flow-node-value">Generate Diffs</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node"><div class="flow-node-label">Step 2</div><div class="flow-node-value">Copy Baseline</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node green"><div class="flow-node-label">Step 3</div><div class="flow-node-value">Apply SKILL.md</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node yellow"><div class="flow-node-label">Step 4</div><div class="flow-node-value">Evaluate</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node purple"><div class="flow-node-label">Step 5</div><div class="flow-node-value">Update Skill</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node red"><div class="flow-node-label">Step 6</div><div class="flow-node-value">Next Version</div></div>
+</div>
+
+<div class="card">
+  <div class="card-header">What happens at each step</div>
+  <table>
+    <tr><th>Step</th><th>Tool/Script</th><th>What It Does</th></tr>
+    <tr><td><span class="pill pill-blue">1. Diffs</span></td><td><code>generate-multi-repo-diffs.py</code></td><td>Extracts structured diff from all 7 repos between release branches. Outputs combined Markdown with new/deleted/modified files, key code changes, and commit messages.</td></tr>
+    <tr><td><span class="pill pill-blue">2. Baseline</span></td><td><code>cp -r docs-corpus/ocp/4.x-1/</code></td><td>Copy the previous version's actual docs as the starting point. This is the "carry forward" — unchanged files stay as-is.</td></tr>
+    <tr><td><span class="pill pill-green">3. Apply</span></td><td>LLM + SKILL.md</td><td>The skill instructs: bump version refs, add new parameters from CRD diffs, update constraint limits, add capability set entries, etc.</td></tr>
+    <tr><td><span class="pill pill-yellow">4. Evaluate</span></td><td><code>evaluate-generated-docs.py</code></td><td>Compare generated output vs actual docs. Produces per-file metrics: text similarity, section coverage, param coverage, include coverage.</td></tr>
+    <tr><td><span class="pill pill-purple">5. Update</span></td><td>Manual analysis</td><td>Identify patterns in failures. Add new rules to SKILL.md. Save snapshot to <code>skills/snapshots/after-4.x/</code>.</td></tr>
+    <tr><td><span class="pill pill-red">6. Next</span></td><td>Repeat</td><td>Move to next version pair. The updated skill should perform better.</td></tr>
+  </table>
+</div>
+
+<div class="callout warning">
+  <p><strong style="color:var(--yellow)">Fair evaluation rule:</strong> We NEVER copy content from the actual (ground truth) docs into the generated output. Missing files are scored as 0% across all metrics. This simulates the real scenario for 4.23+ where no ground truth exists.</p>
+</div>
+
+<hr>
+
+<!-- 5. Metrics -->
+<h2 id="metrics">5. Evaluation Metrics — How They're Measured</h2>
+
+<p>The evaluation script (<code>evaluate-generated-docs.py</code>) compares every generated file against its actual counterpart. Four primary metrics are reported:</p>
+
+<div class="metric-explain">
+  <h4 style="color:var(--accent);">File Coverage</h4>
+  <code class="metric-formula">File Coverage = |Generated ∩ Actual| / |Actual|</code>
+  <p><strong style="color:var(--text)">What:</strong> Of all documentation files that should exist, what percentage did we produce?</p>
+  <p><strong style="color:var(--text)">How:</strong> Files are matched by basename (filename). If actual has 969 files and 880 match our generated set → 880/969 = 90.8%</p>
+  <p><strong style="color:var(--text)">Catches:</strong> Entirely missing docs — new modules, new assembly pages, new platform guides that weren't created.</p>
+  <p><strong style="color:var(--text)">Penalty:</strong> Missing files are scored as 0% on ALL other metrics — they drag down every average significantly.</p>
+</div>
+
+<div class="metric-explain">
+  <h4 style="color:var(--green);">Text Similarity</h4>
+  <code class="metric-formula">Text Similarity = difflib.SequenceMatcher(generated_lines, actual_lines).ratio()</code>
+  <p><strong style="color:var(--text)">What:</strong> Line-by-line content similarity between generated and actual file.</p>
+  <p><strong style="color:var(--text)">Library:</strong> Python's built-in <code>difflib.SequenceMatcher</code> (part of the standard library, no external dependencies).</p>
+  
+  <h4 style="margin-top: 16px; color: var(--text);">How SequenceMatcher Works (Gestalt Pattern Matching)</h4>
+  <p>The algorithm finds the <strong style="color:var(--text)">longest common subsequences</strong> between two sequences (in our case, arrays of lines). It's based on the Ratcliff/Obershelp algorithm:</p>
+  <ol>
+    <li>Find the longest contiguous matching block between the two sequences</li>
+    <li>Recursively find the longest matches in the portions to the left and right of that block</li>
+    <li>Continue until no more matching blocks of a minimum size exist</li>
+  </ol>
+  <p>The <code>.ratio()</code> method returns:</p>
+  <code class="metric-formula">ratio = 2.0 * M / T</code>
+  <p>Where <strong style="color:var(--text)">M</strong> = number of matching elements (lines) across all common subsequences, and <strong style="color:var(--text)">T</strong> = total number of elements in both sequences combined.</p>
+  
+  <h4 style="margin-top: 16px; color: var(--text);">Concrete Example</h4>
+  <div style="background: var(--bg); padding: 16px; border-radius: 6px; font-family: 'SF Mono', monospace; font-size: 0.82rem; margin: 8px 0;">
+    <span style="color:var(--text2)"># Generated file (5 lines):</span><br>
+    <span style="color:var(--text)">= Installing on AWS</span><br>
+    <span style="color:var(--text)">You can install on AWS using IPI.</span><br>
+    <span style="color:var(--text)">== Prerequisites</span><br>
+    <span style="color:var(--text)">* An AWS account</span><br>
+    <span style="color:var(--text)">* The `openshift-install` binary</span><br><br>
+    <span style="color:var(--text2)"># Actual file (6 lines):</span><br>
+    <span style="color:var(--text)">= Installing on AWS</span><br>
+    <span style="color:var(--text)">You can install on AWS using IPI.</span><br>
+    <span style="color:var(--text)">== Prerequisites</span><br>
+    <span style="color:var(--text)">* An AWS account</span><br>
+    <span style="color:var(--green)">* IAM permissions (see table below)</span> ← new in actual<br>
+    <span style="color:var(--text)">* The `openshift-install` binary</span><br><br>
+    <span style="color:var(--text2)"># Result: M=5 matching lines, T=5+6=11 total</span><br>
+    <span style="color:var(--accent)">ratio = 2*5/11 = 0.909 = 90.9%</span>
+  </div>
+  
+  <h4 style="margin-top: 16px; color: var(--text);">Pre-processing Before Comparison</h4>
+  <p>Before computing similarity, both files are <strong style="color:var(--text)">normalized</strong>:</p>
+  <ul>
+    <li>AsciiDoc comment lines (starting with <code>//</code>) are stripped — except module metadata like <code>// Module included in...</code></li>
+    <li>Whitespace is preserved (indentation matters in AsciiDoc)</li>
+    <li>Files are split into arrays of lines — comparison is line-by-line, not character-by-character</li>
+  </ul>
+  
+  <p><strong style="color:var(--text)">Catches:</strong> Wrong wording, missing paragraphs, incorrect version numbers, outdated URLs, missing code examples.</p>
+  <div class="callout" style="margin-top: 8px; padding: 10px 16px;">
+    <p><strong>Interpretation guide:</strong> 95%+ = minor differences (URLs, IDs). 80-95% = some sections changed. 50-80% = significant rewrite. Below 50% = file was restructured or replaced.</p>
+  </div>
+</div>
+
+<div class="metric-explain">
+  <h4 style="color:var(--purple);">Section Coverage</h4>
+  <code class="metric-formula">Section Coverage = |sections_generated ∩ sections_actual| / |sections_actual|</code>
+  <p><strong style="color:var(--text)">What:</strong> Of the AsciiDoc section headers (<code>= Title</code>, <code>== Section</code>) in the actual doc, what percentage exist in our generated version?</p>
+  <p><strong style="color:var(--text)">How:</strong> Regex extracts all lines starting with <code>=+\s+</code>. Compares by exact header text. If actual has 6 sections and generated has 5 matching → 5/6 = 83%.</p>
+  <p><strong style="color:var(--text)">Catches:</strong> Missing entire topics, missing procedure steps, missing reference sections. Can reveal structural problems even when text similarity is high.</p>
+</div>
+
+<div class="metric-explain">
+  <h4 style="color:var(--orange);">Parameter Coverage</h4>
+  <code class="metric-formula">Param Coverage = |params_generated ∩ params_actual| / |params_actual|</code>
+  <p><strong style="color:var(--text)">What:</strong> Of configuration parameter names in the actual doc, what percentage appear in our generated version?</p>
+  <p><strong style="color:var(--text)">How:</strong> Regex extracts backtick-quoted identifiers matching <code>`word.with.dots`</code> or <code>`lowercaseWord`</code> patterns. These capture install-config fields, API fields, CLI flags.</p>
+  <p><strong style="color:var(--text)">Catches:</strong> Missing configuration options. If 4.18 adds <code>`platform.nutanix.failureDomains[].subnets`</code> and we don't document it, this metric drops.</p>
+  <p><strong style="color:var(--text)">Why critical:</strong> Installation docs are parameter-heavy. Missing a parameter = users don't know the option exists.</p>
+</div>
+
+<div class="card" style="margin-top: 24px;">
+  <div class="card-header">Aggregate Scoring Method</div>
+  <p>Final reported percentages are <strong style="color:var(--text)">averages across all files INCLUDING missing files scored as 0%</strong>. This means:</p>
+  <ul>
+    <li>A version with 89 missing files out of 969 will have significantly lower averages even if matched files are 99% similar</li>
+    <li>This design choice penalizes the generator for not creating new documentation — which is the hardest problem</li>
+    <li>It simulates real-world impact: missing docs = users can't find information</li>
+  </ul>
+</div>
+
+<hr>
+
+<!-- 6. Results -->
+<h2 id="results">6. Results Across All Iterations</h2>
+
+<table>
+  <tr><th>Iter</th><th>Version Pair</th><th>File Coverage</th><th>Text Similarity</th><th>Section Coverage</th><th>Param Coverage</th><th>Missing Files</th></tr>
+  <tr><td>1</td><td>4.16 → 4.17</td><td><span class="pill pill-green">~95%</span></td><td><span class="pill pill-green">~94%</span></td><td><span class="pill pill-green">~95%</span></td><td><span class="pill pill-green">~95%</span></td><td>~40</td></tr>
+  <tr><td>2</td><td>4.17 → 4.18</td><td><span class="pill pill-green">95.7%</span></td><td><span class="pill pill-green">94.2%</span></td><td><span class="pill pill-green">94.5%</span></td><td><span class="pill pill-green">95.1%</span></td><td>37</td></tr>
+  <tr><td>3</td><td>4.18 → 4.19</td><td><span class="pill pill-green">97.0%</span></td><td><span class="pill pill-green">96.4%</span></td><td><span class="pill pill-green">96.9%</span></td><td><span class="pill pill-green">96.9%</span></td><td>26</td></tr>
+  <tr class="highlight"><td>4</td><td>4.19 → 4.20</td><td><span class="pill pill-yellow">90.8%</span></td><td><span class="pill pill-yellow">83.2%</span></td><td><span class="pill pill-yellow">87.5%</span></td><td><span class="pill pill-yellow">87.8%</span></td><td>89</td></tr>
+  <tr><td>5</td><td>4.20 → 4.21</td><td><span class="pill pill-green">97.3%</span></td><td><span class="pill pill-green">96.4%</span></td><td><span class="pill pill-green">97.2%</span></td><td><span class="pill pill-green">97.0%</span></td><td>26</td></tr>
+  <tr><td>6</td><td>4.21 → 4.22</td><td><span class="pill pill-green">96.2%</span></td><td><span class="pill pill-green">94.8%</span></td><td><span class="pill pill-green">95.6%</span></td><td><span class="pill pill-green">95.3%</span></td><td>39</td></tr>
+</table>
+
+<div class="diagram">
+  <h3 style="margin-bottom: 12px; text-align: center;">Text Similarity by Iteration</h3>
+  <div class="bar-chart">
+    <div class="bar-group"><div class="bar green" style="height: 94%;"><span class="bar-label">94%</span></div><div class="x-label">4.17</div></div>
+    <div class="bar-group"><div class="bar green" style="height: 94.2%;"><span class="bar-label">94.2%</span></div><div class="x-label">4.18</div></div>
+    <div class="bar-group"><div class="bar green" style="height: 96.4%;"><span class="bar-label">96.4%</span></div><div class="x-label">4.19</div></div>
+    <div class="bar-group"><div class="bar yellow" style="height: 83.2%;"><span class="bar-label">83.2%</span></div><div class="x-label">4.20</div></div>
+    <div class="bar-group"><div class="bar green" style="height: 96.4%;"><span class="bar-label">96.4%</span></div><div class="x-label">4.21</div></div>
+    <div class="bar-group"><div class="bar green" style="height: 94.8%;"><span class="bar-label">94.8%</span></div><div class="x-label">4.22</div></div>
+  </div>
+  <p style="text-align: center; font-size: 0.8rem; margin-top: 12px;">The dip at 4.20 = major editorial restructuring (file splits, renames) not detectable from code diffs</p>
+</div>
+
+<div class="grid-3">
+  <div class="stat"><div class="stat-value">94.9%</div><div class="stat-label">Average Similarity (excl. 4.20)</div></div>
+  <div class="stat"><div class="stat-value yellow">83.2%</div><div class="stat-label">Worst Case (4.20 restructuring)</div></div>
+  <div class="stat"><div class="stat-value" style="color:var(--accent);">93.2%</div><div class="stat-label">Overall Average (all 6)</div></div>
+</div>
+
+<hr>
+
+<!-- 7. Skill Evolution -->
+<h2 id="skill-evolution">7. SKILL.md Evolution</h2>
+
+<div class="card">
+  <div class="card-header">Growth Across Iterations</div>
+  <table>
+    <tr><th>Snapshot</th><th>Lines</th><th>Change</th><th>Rules</th><th>What Was Added</th></tr>
+    <tr><td><code>after-4.17</code></td><td>397</td><td>—</td><td>10</td><td>Initial: 5-phase process, AsciiDoc conventions, 5 iteration-1 lessons</td></tr>
+    <tr><td><code>after-4.18</code></td><td>438</td><td style="color:var(--green)">+41</td><td>14</td><td>+4 rules: platform modules, capability bumps, constraint limits, firewall patterns</td></tr>
+    <tr><td><code>after-4.19</code></td><td>438</td><td style="color:var(--text2)">0</td><td>14</td><td>No changes needed — existing rules covered this iteration</td></tr>
+    <tr><td><code>after-4.20</code></td><td>470</td><td style="color:var(--green)">+32</td><td>14</td><td>Restructuring patterns: file splits, SNO reorg, assembly granularization</td></tr>
+    <tr><td><code>after-4.21</code></td><td>470</td><td style="color:var(--text2)">0</td><td>14</td><td>No changes needed — restructuring is periodic, not constant</td></tr>
+    <tr><td><code>after-4.22</code></td><td>515</td><td style="color:var(--green)">+45</td><td>14</td><td>Final data: all iteration findings, GCP Infra Manager, EU Sovereign, summary table</td></tr>
+  </table>
+</div>
+
+<h3>Timeline</h3>
+<div class="skill-timeline">
+  <div class="skill-point">
+    <div class="skill-point-version">Initial SKILL.md (before training)</div>
+    <div class="skill-point-text">5-phase generation process. 9 AsciiDoc conventions. 10 important rules. Adapted from teammate's <code>operator-user-docs</code> project skill structure.</div>
+  </div>
+  <div class="skill-point green">
+    <div class="skill-point-version" style="color:var(--green)">After 4.18 — First Skill Update</div>
+    <div class="skill-point-text">
+      <strong style="color:var(--text)">Added 4 new rules learned from gaps:</strong><br>
+      • Rule 11: New platform docs modules appear when new APIs/features land<br>
+      • Rule 12: Each release adds a capability set (v4.18, v4.19...)<br>
+      • Rule 13: API validation limits (maxItems) → doc constraint text updates<br>
+      • Rule 14: Firewall docs always have low similarity (URLs change externally)
+    </div>
+  </div>
+  <div class="skill-point">
+    <div class="skill-point-version">After 4.19 — No Changes</div>
+    <div class="skill-point-text">97% similarity confirmed rules from 4.18 were sufficient. Skill is converging.</div>
+  </div>
+  <div class="skill-point yellow">
+    <div class="skill-point-version" style="color:var(--yellow)">After 4.20 — Major Restructuring Lessons</div>
+    <div class="skill-point-text">
+      <strong style="color:var(--text)">Documented the 83% drop root cause:</strong><br>
+      • SNO docs split into 6 new modules<br>
+      • Azure VNet split into 3 separate files<br>
+      • FIPS split into 2 modules<br>
+      • Pattern: "Extra" files = old consolidated modules that were split in actual docs<br>
+      • Key lesson: editorial restructuring cannot be predicted from code diffs
+    </div>
+  </div>
+  <div class="skill-point">
+    <div class="skill-point-version">After 4.21 — No Changes</div>
+    <div class="skill-point-text">97.3% confirms restructurings are periodic (every 2-3 versions), not every release.</div>
+  </div>
+  <div class="skill-point purple">
+    <div class="skill-point-version" style="color:var(--purple)">After 4.22 — Final Comprehensive Update</div>
+    <div class="skill-point-text">
+      Added complete iteration metrics table. Documented GCP UPI template migration (Deployment Manager → Infrastructure Manager). EU Sovereign Cloud. Fencing validator pattern. Final insight: the ~95% ceiling is structural.
+    </div>
+  </div>
+</div>
+
+<div class="callout success">
+  <p><strong style="color:var(--green)">Convergence signal:</strong> 2 out of 6 iterations required zero changes to SKILL.md. The rules are converging — new versions repeat known patterns rather than introducing fundamentally new ones.</p>
+</div>
+
+<hr>
+
+<!-- 8. Findings -->
+<h2 id="findings">8. Key Findings & Interpretations</h2>
+
+<div class="card">
+  <div class="card-header" style="color:var(--green);">Finding 1: ~95% accuracy is achievable with code-diffs alone</div>
+  <p>Across 5 of 6 iterations, we consistently achieved 94-97% text similarity. The version bump + targeted feature changes strategy works.</p>
+  <p>The remaining ~5% gap consists of:</p>
+  <ul>
+    <li>New documentation modules (25-39 files/version) not predictable from code</li>
+    <li>Firewall allowlist URLs that change outside monitored repos</li>
+    <li>AMI IDs, region data from release engineering</li>
+    <li>Editorial improvements by the docs team</li>
+  </ul>
+</div>
+
+<div class="card">
+  <div class="card-header" style="color:var(--yellow);">Finding 2: Documentation restructuring is the #1 accuracy killer</div>
+  <p>The 4.19→4.20 iteration scored 83.2% — a <strong style="color:var(--text)">13% drop</strong> from adjacent versions. Root cause: editorial file reorganization.</p>
+  <table>
+    <tr><th>Restructuring Pattern</th><th>Impact</th></tr>
+    <tr><td>SNO docs split into 6 separate modules</td><td>6 new files not generated, parent files restructured</td></tr>
+    <tr><td>Azure VNet docs split into 3 modules</td><td>Original drops to 7.6% similarity</td></tr>
+    <tr><td>FIPS docs split into 2 modules</td><td>Parent restructured + 2 missing files</td></tr>
+    <tr><td>Overview page completely rewritten</td><td>4.6% similarity</td></tr>
+    <tr><td>vSphere config examples major rewrite</td><td>22.4% similarity</td></tr>
+  </table>
+  <div class="callout warning" style="margin-top: 12px;">
+    <p>These are <strong style="color:var(--yellow)">editorial decisions</strong> — not driven by code changes. They happen every 2-3 versions. Requires docs team planning signals to predict.</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header" style="color:var(--purple);">Finding 3: New product integrations are invisible to our analysis</div>
+  <p>Each version adds docs for features whose changes don't appear in our 7 repos:</p>
+  <table>
+    <tr><th>Version</th><th>Unpredictable Additions</th><th>New Modules</th></tr>
+    <tr><td>4.18</td><td>C3 (Compute Cloud@Customer) from Oracle integration</td><td>~10</td></tr>
+    <tr><td>4.19</td><td>BMaaS (Bare Metal as a Service) from infra team</td><td>~6</td></tr>
+    <tr><td>4.20</td><td>Two-node arbiter, CCM config overrides</td><td>~8</td></tr>
+    <tr><td>4.22</td><td>Fencing validators, IBM PowerVC, GCP Infra Manager</td><td>~15</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <div class="card-header" style="color:var(--accent);">Finding 4: What works well vs. what doesn't</div>
+  <div class="grid-2">
+    <div>
+      <h4 style="color:var(--green);">Works Well (95%+)</h4>
+      <ul>
+        <li>Version reference bumps (release-4.x URLs)</li>
+        <li>New install-config parameters from CRD diffs</li>
+        <li>Tested instance type additions</li>
+        <li>Feature gate promotions (TechPreview → GA)</li>
+        <li>Platform constraint limit updates</li>
+        <li>Capability set version additions</li>
+        <li>Include directive preservation</li>
+      </ul>
+    </div>
+    <div>
+      <h4 style="color:var(--red);">Doesn't Work (< 80%)</h4>
+      <ul>
+        <li>File restructuring / splits / renames</li>
+        <li>New product integrations (C3, PCA, PowerVC)</li>
+        <li>Firewall URL rewrites (3.7% every time)</li>
+        <li>Editorial rewrites for clarity</li>
+        <li>Cross-product documentation</li>
+        <li>IaC template migrations (DM → Infra Mgr)</li>
+        <li>AMI/image ID updates per region</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">Finding 5: SKILL.md converges — not every iteration needs updates</div>
+  <div class="bar-chart" style="height: 120px;">
+    <div class="bar-group"><div class="bar" style="height: 82%;"><span class="bar-label">+41</span></div><div class="x-label">→4.18</div></div>
+    <div class="bar-group"><div class="bar" style="height: 2%; background: var(--border);"><span class="bar-label">0</span></div><div class="x-label">→4.19</div></div>
+    <div class="bar-group"><div class="bar" style="height: 64%;"><span class="bar-label">+32</span></div><div class="x-label">→4.20</div></div>
+    <div class="bar-group"><div class="bar" style="height: 2%; background: var(--border);"><span class="bar-label">0</span></div><div class="x-label">→4.21</div></div>
+    <div class="bar-group"><div class="bar" style="height: 90%;"><span class="bar-label">+45</span></div><div class="x-label">→4.22</div></div>
+  </div>
+  <p style="text-align:center; font-size:0.8rem;">Lines added to SKILL.md per iteration (0 = no update needed)</p>
+</div>
+
+<hr>
+
+<!-- 9. Limitations -->
+<h2 id="limitations">9. Limitations & Accuracy Ceiling</h2>
+
+<div class="card">
+  <div class="card-header">Information Sources Missing From Our Pipeline</div>
+  <table>
+    <tr><th>Missing Signal</th><th>What It Would Provide</th><th>Impact</th></tr>
+    <tr><td>Docs team Jira / planning</td><td>File restructuring plans, new topics</td><td><span class="pill pill-green">+10% in restructuring versions</span></td></tr>
+    <tr><td>Enhancement proposals</td><td>New product integrations, features</td><td><span class="pill pill-green">+25-39 new files per version</span></td></tr>
+    <tr><td>Release engineering artifacts</td><td>AMI IDs, image URLs, SHA digests</td><td><span class="pill pill-blue">Fix version-specific references</span></td></tr>
+    <tr><td>Security/firewall team</td><td>Updated allowlist URLs, ports</td><td><span class="pill pill-blue">Fix persistent 3.7% firewall file</span></td></tr>
+    <tr><td>Partner ecosystem repos</td><td>C3, PCA, PowerVC integrations</td><td><span class="pill pill-purple">Predict partner platform docs</span></td></tr>
+  </table>
+</div>
+
+<div class="grid-3" style="margin-top: 20px;">
+  <div class="stat"><div class="stat-value">~97%</div><div class="stat-label">Ceiling: normal versions</div></div>
+  <div class="stat"><div class="stat-value yellow">~90%</div><div class="stat-label">Ceiling: restructuring versions</div></div>
+  <div class="stat"><div class="stat-value" style="color:var(--accent);">~95%</div><div class="stat-label">Ceiling: average across all</div></div>
+</div>
+
+<div class="callout">
+  <p>To exceed 97% accuracy consistently, the pipeline needs supplementary signals beyond code diffs — specifically docs team planning documents and enhancement proposals.</p>
+</div>
+
+<hr>
+
+<!-- 10. Next Steps -->
+<h2 id="next-steps">10. Next Steps</h2>
+
+<div class="card">
+  <ol style="padding-left: 24px;">
+    <li style="margin: 12px 0;"><strong style="color:var(--text)">Deploy for 4.23</strong> — Use the trained SKILL.md to generate 4.23 docs from 4.22 + diffs. This is the real test: no ground truth.</li>
+    <li style="margin: 12px 0;"><strong style="color:var(--text)">Integrate supplementary signals</strong> — Connect to docs team Jira for restructuring plans and enhancement proposals for new features.</li>
+    <li style="margin: 12px 0;"><strong style="color:var(--text)">Expand to other sections</strong> — Apply the methodology to networking, storage, and operator documentation.</li>
+    <li style="margin: 12px 0;"><strong style="color:var(--text)">Automate with GitHub Actions</strong> — Trigger on release branch creation → generate diffs → apply skill → create draft PR.</li>
+    <li style="margin: 12px 0;"><strong style="color:var(--text)">Confidence-based routing</strong> — Auto-approve high-confidence updates (version bumps); flag low-confidence items (new modules, restructured files) for human review.</li>
+    <li style="margin: 12px 0;"><strong style="color:var(--text)">Run eval harness</strong> — Use <code>opendatahub-io/agent-eval-harness</code> for formal scoring with deterministic + LLM judges on final outputs.</li>
+  </ol>
+</div>
+
+<hr>
+
+<div style="text-align: center; padding: 32px 0; color: var(--text2);">
+  <p style="font-size: 0.85rem;">Generated from iterative training across OpenShift 4.16 → 4.22 | OKD Documentation Automation POC | August 2026</p>
+</div>
+
+</body>
+</html>

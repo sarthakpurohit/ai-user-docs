@@ -1,0 +1,47 @@
+# Cloned source repositories (bare)
+*.git/
+!.git
+
+# Cloned source repositories (non-bare)
+installer/
+machine-config-operator/
+machine-api-operator/
+operator-user-docs/
+
+# Extracted docs corpus (regenerate with: make extract)
+docs-corpus/
+
+# Large generated artifacts (regenerable via make)
+generated/installing/
+eval/dataset/
+comparison/
+
+# Old pipeline work
+phase0-pipeline/
+
+# Reference projects
+ai-helpers/
+
+# Temporary / scratch
+scratch/
+temp/
+
+# Build artifacts
+_upstream/
+node_modules/
+dist/
+reports/
+
+# Environment / secrets
+.env
+*.log
+*.lock.yml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Personal / sensitive files
+*.pdf
+*.docx
+*.xlsx

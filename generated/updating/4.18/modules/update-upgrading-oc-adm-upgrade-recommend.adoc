@@ -1,0 +1,71 @@
+// Module included in the following assemblies:
+//
+// * updating/updating_a_cluster/updating-cluster-cli.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-upgrading-oc-adm-upgrade-recommend_{context}"]
+= Viewing update recommendations using oc adm upgrade recommend
+
+You can use the `oc adm upgrade recommend` command to view available updates and any associated risks for your cluster. This command organizes available updates by minor version and displays whether each version has known issues relevant to your cluster.
+
+The `oc adm upgrade recommend` command is read-only and does not alter any state in your cluster.
+
+.Prerequisites
+
+* You installed the {oc-first} that matches the version for your updated version.
+* You are logged in to the cluster as user with `cluster-admin` privileges.
+
+.Procedure
+
+. View available update recommendations by running the following command:
++
+[source,terminal]
+----
+$ oc adm upgrade recommend
+----
++
+.Example output
+[source,terminal]
+----
+Upstream is unset, so the cluster will use an appropriate default.
+Channel: stable-4.18 (available channels: candidate-4.18, candidate-4.19, eus-4.18, fast-4.18, stable-4.18)
+
+Updates to 4.18:
+  VERSION     ISSUES
+  4.18.5      no known issues relevant to this cluster
+  4.18.4      no known issues relevant to this cluster
+And 3 older 4.18 updates you can see with '--show-outdated-releases' or '--version VERSION'.
+----
++
+The output groups available updates by major.minor version and shows at most two recommended versions per group by default.
+
+. To view all available versions including older patch releases, use the `--show-outdated-releases` flag:
++
+[source,terminal]
+----
+$ oc adm upgrade recommend --show-outdated-releases
+----
+
+. To view details for a specific version, including its image pullspec and any known risks, use the `--version` flag:
++
+[source,terminal]
+----
+$ oc adm upgrade recommend --version <version>
+----
++
+Replace `<version>` with the version you want to inspect.
++
+.Example output for a version with no known issues
+[source,terminal]
+----
+Update to 4.18.5 has no known issues relevant to this cluster.
+Image: quay.io/openshift-release-dev/ocp-release@sha256:...
+Release URL: https://access.redhat.com/errata/RHSA-2025:0001
+----
++
+If the version has known conditional update risks, the output includes the risk reason and message.
+
+[NOTE]
+====
+If the cluster has `Upgradeable=False` set, the `oc adm upgrade recommend` command injects this as a risk on all minor version updates. This helps you understand that a minor update is blocked and displays the reason from the `Upgradeable` condition.
+====

@@ -1,0 +1,49 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="updating-cluster-prepare"]
+= Preparing to update to {product-title} 4.20
+include::_attributes/common-attributes.adoc[]
+:context: updating-cluster-prepare
+
+toc::[]
+
+Learn more about administrative tasks that cluster admins must perform to successfully initialize an update, as well as optional guidelines for ensuring a successful update.
+
+[id="kube-api-removals_{context}"]
+== Kubernetes API removals
+
+There are no Kubernetes API removals in {product-title} 4.20. No administrator acknowledgment is required to update from {product-title} 4.19 to 4.20.
+
+// No administrator acknowledgment required
+include::modules/update-preparing-ack.adoc[leveloffset=+2]
+
+// Assessing the risk of conditional updates
+include::modules/update-preparing-conditional.adoc[leveloffset=+1]
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../updating/understanding_updates/how-updates-work.adoc#update-evaluate-availability_how-updates-work[Evaluation of update availability]
+
+// etcd backups before cluster updates
+include::modules/update-etcd-backup.adoc[leveloffset=+1]
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../backup_and_restore/control_plane_backup_and_restore/backing-up-etcd.adoc#backup-etcd[Backing up etcd]
+
+* xref:../../backup_and_restore/control_plane_backup_and_restore/disaster_recovery/scenario-2-restoring-cluster-state.adoc#dr-restoring-cluster-state[Restoring to a previous cluster state]
+
+// Gateway API management succession
+include::modules/nw-ingress-gateway-api-manage-succession.adoc[leveloffset=+1]
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../networking/ingress_load_balancing/configuring_ingress_cluster_traffic/ingress-gateway-api.adoc#nw-ingress-gateway-api-implementation[Gateway API implementation for {product-title}]
+
+// Best practices for cluster updates
+include::modules/update-best-practices.adoc[leveloffset=+1]
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../updating/understanding_updates/intro-to-updates.adoc#understanding_clusteroperator_conditiontypes_understanding-openshift-updates[Understanding cluster Operator condition types]

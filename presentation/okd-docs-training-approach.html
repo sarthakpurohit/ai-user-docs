@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OKD Installation Docs — AI Generation POC</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2128;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --accent: #58a6ff;
+  --green: #3fb950;
+  --yellow: #d29922;
+  --red: #f85149;
+  --purple: #bc8cff;
+  --orange: #f0883e;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 40px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+h1 { font-size: 2.2rem; margin-bottom: 8px; font-weight: 700; }
+h2 { font-size: 1.5rem; margin: 48px 0 16px; font-weight: 600; color: var(--accent); }
+h3 { font-size: 1.1rem; margin-bottom: 8px; font-weight: 600; }
+p { color: var(--text2); margin-bottom: 16px; }
+.subtitle { color: var(--text2); font-size: 1.1rem; margin-bottom: 32px; }
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.card-header {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Grid */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+
+/* Pills */
+.pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.pill-red { background: #f8514922; color: var(--red); }
+.pill-yellow { background: #d2992222; color: var(--yellow); }
+.pill-blue { background: #58a6ff22; color: var(--accent); }
+.pill-green { background: #3fb95022; color: var(--green); }
+.pill-purple { background: #bc8cff22; color: var(--purple); }
+
+/* Stats */
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+.stat-value { font-size: 2rem; font-weight: 700; color: var(--green); }
+.stat-label { font-size: 0.85rem; color: var(--text2); margin-top: 4px; }
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+th {
+  text-align: left;
+  padding: 12px 16px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+  font-weight: 600;
+}
+td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+tr:nth-child(even) td { background: var(--surface2); }
+
+/* Callout */
+.callout {
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  padding: 16px 20px;
+  border-radius: 0 8px 8px 0;
+  margin: 24px 0;
+}
+.callout.warning { border-left-color: var(--yellow); }
+
+/* Divider */
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 40px 0;
+}
+
+/* Diagram styles */
+.diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
+  margin: 24px 0;
+  overflow-x: auto;
+}
+.formula {
+  text-align: center;
+  padding: 24px;
+  margin: 16px 0;
+}
+.formula-main {
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: var(--text);
+}
+.formula-main .var { color: var(--accent); }
+.formula-main .op { color: var(--text2); padding: 0 8px; }
+.formula-main .fn { color: var(--green); }
+.formula-sub {
+  font-size: 0.9rem;
+  color: var(--text2);
+  margin-top: 8px;
+}
+
+/* Flow diagram */
+.flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 20px 0;
+  flex-wrap: wrap;
+}
+.flow-node {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 20px;
+  text-align: center;
+  min-width: 140px;
+}
+.flow-node.accent {
+  border-color: var(--accent);
+  background: #58a6ff11;
+}
+.flow-node.green {
+  border-color: var(--green);
+  background: #3fb95011;
+}
+.flow-node.yellow {
+  border-color: var(--yellow);
+  background: #d2992211;
+}
+.flow-node.purple {
+  border-color: var(--purple);
+  background: #bc8cff11;
+}
+.flow-node-label { font-size: 0.75rem; color: var(--text2); margin-bottom: 4px; }
+.flow-node-value { font-weight: 600; font-size: 0.95rem; }
+.flow-arrow {
+  font-size: 1.5rem;
+  color: var(--text2);
+  padding: 0 12px;
+}
+
+/* Training loop visual */
+.loop-diagram {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 20px;
+}
+.loop-step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.loop-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+.loop-content {
+  flex: 1;
+  padding: 12px 16px;
+  background: var(--surface2);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.loop-arrow-down {
+  width: 36px;
+  text-align: center;
+  color: var(--text2);
+  font-size: 1.2rem;
+}
+.loop-feedback {
+  position: absolute;
+  right: -60px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Iteration visual */
+.iter-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 40px 1fr 40px 1fr;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+}
+.iter-label {
+  font-weight: 600;
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+.iter-box {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  text-align: center;
+}
+.iter-box.input { background: #58a6ff15; border: 1px solid #58a6ff44; }
+.iter-box.diff { background: #d2992215; border: 1px solid #d2992244; }
+.iter-box.output { background: #3fb95015; border: 1px solid #3fb95044; }
+.iter-arrow { text-align: center; color: var(--text2); font-size: 1.2rem; }
+
+/* Skill evolution */
+.skill-timeline {
+  position: relative;
+  padding-left: 24px;
+  border-left: 2px solid var(--border);
+}
+.skill-point {
+  position: relative;
+  padding: 12px 0 24px 24px;
+}
+.skill-point::before {
+  content: '';
+  position: absolute;
+  left: -30px;
+  top: 16px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+}
+.skill-point-version { font-weight: 600; color: var(--accent); margin-bottom: 4px; }
+.skill-point-text { color: var(--text2); font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<h1>OKD Installation Docs: AI Generation POC</h1>
+<p class="subtitle">Iterative skill training approach for automated documentation generation</p>
+
+<!-- Problem -->
+<div class="card">
+  <div class="card-header">The Problem</div>
+  <p>The OKD documentation team will no longer maintain installation docs. We need an automated, AI-driven pipeline that generates accurate user-facing documentation from source code changes alone.</p>
+  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+    <span class="pill pill-red">No dedicated docs team</span>
+    <span class="pill pill-yellow">Docs already outdated (FCOS→SCOS)</span>
+    <span class="pill pill-blue">Must scale across versions</span>
+  </div>
+</div>
+
+<hr>
+
+<!-- Core Formula -->
+<h2>Core Formula</h2>
+
+<div class="diagram">
+  <div class="formula">
+    <div class="formula-main">
+      <span class="var">Docs<sub>4.x</sub></span>
+      <span class="op">=</span>
+      <span class="fn">LLM</span>(<span class="var">Docs<sub>4.x-1</sub></span>
+      <span class="op">+</span>
+      <span class="var">CodeDiff<sub>4.x-1 → 4.x</sub></span>
+      <span class="op">+</span>
+      <span class="var">SKILL.md</span>)
+    </div>
+    <div class="formula-sub">
+      Previous version docs + multi-repo code changes + generation instructions = next version docs
+    </div>
+  </div>
+</div>
+
+<!-- Visual flow -->
+<div class="diagram">
+  <div style="text-align: center; margin-bottom: 16px; color: var(--text2); font-size: 0.85rem;">GENERATION PIPELINE</div>
+  <div class="flow">
+    <div class="flow-node accent">
+      <div class="flow-node-label">INPUT 1</div>
+      <div class="flow-node-value">v4.x-1 Docs</div>
+    </div>
+    <div class="flow-arrow">+</div>
+    <div class="flow-node yellow">
+      <div class="flow-node-label">INPUT 2</div>
+      <div class="flow-node-value">Code Diff</div>
+    </div>
+    <div class="flow-arrow">+</div>
+    <div class="flow-node purple">
+      <div class="flow-node-label">INPUT 3</div>
+      <div class="flow-node-value">SKILL.md</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" style="border-color: var(--text2); background: var(--surface);">
+      <div class="flow-node-label">PROCESS</div>
+      <div class="flow-node-value">LLM</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node green">
+      <div class="flow-node-label">OUTPUT</div>
+      <div class="flow-node-value">v4.x Docs</div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- Three Inputs -->
+<h2>Three Inputs Explained</h2>
+<div class="grid-3">
+  <div class="card">
+    <div class="card-header"><span class="pill pill-blue">Baseline</span></div>
+    <h3>v4.x-1 Documentation</h3>
+    <p>Previous version's installation section — ~880 AsciiDoc files covering all platforms (AWS, GCP, Azure, vSphere, bare metal, etc.)</p>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="pill pill-yellow">Delta</span></div>
+    <h3>Multi-Repo Code Diff</h3>
+    <p>Structured diff summaries from 7 repos between release-4.x-1 and release-4.x branches. Captures new features, deprecations, and parameter changes.</p>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="pill pill-purple">Instructions</span></div>
+    <h3>SKILL.md</h3>
+    <p>A detailed instruction file teaching the LLM AsciiDoc conventions, OKD patterns, conditional blocks, and how to map code changes to doc updates.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- Training Loop -->
+<h2>Training Loop: 4.17 → 4.22</h2>
+<p>We iteratively refine SKILL.md by generating docs for known versions and comparing against existing human-written docs.</p>
+
+<div class="diagram">
+  <div style="text-align: center; margin-bottom: 20px; color: var(--text2); font-size: 0.85rem;">TRAINING ITERATION STRUCTURE</div>
+
+  <div class="loop-diagram">
+    <div class="loop-step">
+      <div class="loop-num">1</div>
+      <div class="loop-content">
+        <strong>Generate</strong> — Use SKILL.md + v4.x-1 docs + code diff → produce v4.x docs
+      </div>
+    </div>
+    <div style="padding-left: 18px;"><div class="loop-arrow-down">↓</div></div>
+    <div class="loop-step">
+      <div class="loop-num">2</div>
+      <div class="loop-content">
+        <strong>Evaluate</strong> — Compare generated v4.x against actual v4.x (text similarity, section coverage, parameter coverage)
+      </div>
+    </div>
+    <div style="padding-left: 18px;"><div class="loop-arrow-down">↓</div></div>
+    <div class="loop-step">
+      <div class="loop-num">3</div>
+      <div class="loop-content">
+        <strong>Learn</strong> — Identify gaps, update SKILL.md with new rules/patterns discovered from the delta
+      </div>
+    </div>
+    <div style="padding-left: 18px;"><div class="loop-arrow-down">↓</div></div>
+    <div class="loop-step">
+      <div class="loop-num">4</div>
+      <div class="loop-content">
+        <strong>Repeat</strong> — Move to next version pair with the improved SKILL.md
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align: center; margin-top: 16px;">
+    <span style="font-size: 1.5rem; color: var(--accent);">↻</span>
+    <span style="color: var(--text2); font-size: 0.85rem; margin-left: 8px;">SKILL.md improves with each iteration</span>
+  </div>
+</div>
+
+<!-- Iteration table visual -->
+<div class="diagram">
+  <div style="text-align: center; margin-bottom: 16px; color: var(--text2); font-size: 0.85rem;">ALL 6 ITERATIONS</div>
+  <div class="iter-row" style="font-weight: 600; color: var(--text2); font-size: 0.8rem; padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 8px;">
+    <div></div>
+    <div style="text-align: center;">INPUT DOCS</div>
+    <div></div>
+    <div style="text-align: center;">CODE DIFF</div>
+    <div></div>
+    <div style="text-align: center;">GENERATES</div>
+  </div>
+  <div class="iter-row">
+    <div class="iter-label">Iter 1</div>
+    <div class="iter-box input">4.16 docs</div>
+    <div class="iter-arrow">+</div>
+    <div class="iter-box diff">4.16 → 4.17</div>
+    <div class="iter-arrow">→</div>
+    <div class="iter-box output">4.17 docs</div>
+  </div>
+  <div class="iter-row">
+    <div class="iter-label">Iter 2</div>
+    <div class="iter-box input">4.17 docs</div>
+    <div class="iter-arrow">+</div>
+    <div class="iter-box diff">4.17 → 4.18</div>
+    <div class="iter-arrow">→</div>
+    <div class="iter-box output">4.18 docs</div>
+  </div>
+  <div class="iter-row">
+    <div class="iter-label">Iter 3</div>
+    <div class="iter-box input">4.18 docs</div>
+    <div class="iter-arrow">+</div>
+    <div class="iter-box diff">4.18 → 4.19</div>
+    <div class="iter-arrow">→</div>
+    <div class="iter-box output">4.19 docs</div>
+  </div>
+  <div class="iter-row">
+    <div class="iter-label">Iter 4</div>
+    <div class="iter-box input">4.19 docs</div>
+    <div class="iter-arrow">+</div>
+    <div class="iter-box diff">4.19 → 4.20</div>
+    <div class="iter-arrow">→</div>
+    <div class="iter-box output">4.20 docs</div>
+  </div>
+  <div class="iter-row">
+    <div class="iter-label">Iter 5</div>
+    <div class="iter-box input">4.20 docs</div>
+    <div class="iter-arrow">+</div>
+    <div class="iter-box diff">4.20 → 4.21</div>
+    <div class="iter-arrow">→</div>
+    <div class="iter-box output">4.21 docs</div>
+  </div>
+  <div class="iter-row">
+    <div class="iter-label">Iter 6</div>
+    <div class="iter-box input">4.21 docs</div>
+    <div class="iter-arrow">+</div>
+    <div class="iter-box diff">4.21 → 4.22</div>
+    <div class="iter-arrow">→</div>
+    <div class="iter-box output">4.22 docs</div>
+  </div>
+  <div style="border-top: 1px dashed var(--border); margin-top: 12px; padding-top: 12px;">
+    <div class="iter-row">
+      <div class="iter-label" style="color: var(--green);">Deploy</div>
+      <div class="iter-box input">4.22 docs</div>
+      <div class="iter-arrow">+</div>
+      <div class="iter-box diff">4.22 → 4.23</div>
+      <div class="iter-arrow">→</div>
+      <div class="iter-box output" style="background: #3fb95025; border-color: var(--green); font-weight: 700;">4.23 docs ✓</div>
+    </div>
+    <div style="text-align: center; color: var(--green); font-size: 0.85rem; margin-top: 8px;">No human-written docs exist — this is the production target</div>
+  </div>
+</div>
+
+<hr>
+
+<!-- Fair Evaluation -->
+<h2>First Iteration Results (4.16 → 4.17)</h2>
+<p style="margin-bottom: 24px;"><strong style="color: var(--text);">Fair evaluation</strong> — no content copied from actual 4.17 docs during generation. Missing files scored as 0%.</p>
+
+<div class="grid-4">
+  <div class="stat">
+    <div class="stat-value">94.8%</div>
+    <div class="stat-label">File Coverage</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">92.1%</div>
+    <div class="stat-label">Text Similarity</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">93.3%</div>
+    <div class="stat-label">Section Coverage</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">93.9%</div>
+    <div class="stat-label">Param Coverage</div>
+  </div>
+</div>
+
+<div class="grid-2" style="margin-top: 24px;">
+  <div class="card">
+    <div class="card-header"><span class="pill pill-green">Captured from code diffs</span></div>
+    <ul style="color: var(--text2); font-size: 0.9rem; padding-left: 16px; line-height: 2;">
+      <li>GCP labels/tags: TechPreview → GA</li>
+      <li>IBM Cloud: new service endpoints</li>
+      <li>Image-based installer stub docs</li>
+      <li>OpenShift SDN deprecation notices</li>
+      <li>vSphere multi-vCenter (up to 3)</li>
+      <li>Capability set v4.17</li>
+      <li>GCP hyperdisk-balanced disk type</li>
+      <li>Nutanix GPU + dataDisks</li>
+      <li>Alibaba platform deprecation</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="pill pill-red">Cannot derive from code alone</span></div>
+    <ul style="color: var(--text2); font-size: 0.9rem; padding-left: 16px; line-height: 2;">
+      <li>16 BMO modules (full procedures from CRDs)</li>
+      <li>File renames (editorial decisions)</li>
+      <li>Directory restructuring</li>
+      <li>Multi-arch full procedure docs</li>
+      <li>Editorial rewrites / CQA improvements</li>
+      <li>Cross-repo procedural knowledge</li>
+    </ul>
+  </div>
+</div>
+
+<div class="callout warning" style="margin-top: 24px;">
+  <strong>Key insight:</strong> ~92% of documentation updates are mechanical (parameter additions, feature flags, version bumps) and automatable. The remaining ~8% requires human review — editorial reorganization, brand-new procedural content, and cross-system knowledge.
+</div>
+
+<hr>
+
+<!-- SKILL.md Evolution -->
+<h2>How SKILL.md Evolves</h2>
+<p>Each iteration teaches the skill file new patterns based on what the generated output got wrong.</p>
+
+<div class="diagram">
+  <div class="skill-timeline">
+    <div class="skill-point">
+      <div class="skill-point-version">Initial (before 4.17)</div>
+      <div class="skill-point-text">Base rules: AsciiDoc format, OKD conditionals, version attribute updates, parameter tables, include directives</div>
+    </div>
+    <div class="skill-point">
+      <div class="skill-point-version">After 4.17 iteration</div>
+      <div class="skill-point-text"><strong>+</strong> Structural reorganization detection (directory renames, file prefix changes like ibmz- → ibm-z-)<br><strong>+</strong> Stub generation for entirely new features</div>
+    </div>
+    <div class="skill-point">
+      <div class="skill-point-version">After 4.18 iteration</div>
+      <div class="skill-point-text"><strong>+</strong> Cross-repo feature correlation (MCO changes → install prereq updates)<br><strong>+</strong> Deprecation notice patterns</div>
+    </div>
+    <div class="skill-point">
+      <div class="skill-point-version">After 4.19 iteration</div>
+      <div class="skill-point-text"><strong>+</strong> Stub generation triggers — when new platform needs full assembly scaffold vs. update to existing</div>
+    </div>
+    <div class="skill-point">
+      <div class="skill-point-version">After 4.20 iteration</div>
+      <div class="skill-point-text"><strong>+</strong> Deprecation cascade rules — removing platform updates all cross-references</div>
+    </div>
+    <div class="skill-point">
+      <div class="skill-point-version">After 4.21 iteration</div>
+      <div class="skill-point-text"><strong>+</strong> Parameter table formatting refinements — row format, description style consistency</div>
+    </div>
+    <div class="skill-point">
+      <div class="skill-point-version">After 4.22 iteration (production-ready)</div>
+      <div class="skill-point-text"><strong>+</strong> Final tuning: section headers, include directives, conditional content precision<br>Ready for autonomous 4.23 generation</div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- Multi-repo -->
+<h2>Multi-Repo Diff Sources</h2>
+<p>Installation docs changes come from 7 repositories. We generate structured diff summaries between release branches.</p>
+
+<div class="card" style="padding: 0; overflow: hidden;">
+  <table>
+    <thead>
+      <tr>
+        <th>Repository</th>
+        <th>Contribution to Install Docs</th>
+        <th>Key Paths</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>openshift/installer</strong></td>
+        <td>Install-config schema, platforms, CLI, UPI templates</td>
+        <td><code>pkg/types/</code>, <code>cmd/</code>, <code>docs/user/</code></td>
+      </tr>
+      <tr>
+        <td><strong>openshift/api</strong></td>
+        <td>Feature gates, capabilities, API types, CRDs</td>
+        <td><code>install/</code>, <code>config/</code>, <code>features/</code></td>
+      </tr>
+      <tr>
+        <td><strong>openshift/baremetal-operator</strong></td>
+        <td>Bare metal IPI host management, BMO resources</td>
+        <td><code>apis/</code>, <code>controllers/</code></td>
+      </tr>
+      <tr>
+        <td><strong>openshift/cluster-network-operator</strong></td>
+        <td>Networking config (MTU, OVN, firewall)</td>
+        <td><code>pkg/</code>, <code>manifests/</code></td>
+      </tr>
+      <tr>
+        <td><strong>openshift/machine-config-operator</strong></td>
+        <td>Ignition, bootstrap, FIPS, day-0 configs</td>
+        <td><code>pkg/</code>, <code>templates/</code></td>
+      </tr>
+      <tr>
+        <td><strong>openshift/machine-api-operator</strong></td>
+        <td>IPI machine provisioning</td>
+        <td><code>pkg/</code>, <code>cmd/</code></td>
+      </tr>
+      <tr>
+        <td><strong>openshift/assisted-installer</strong></td>
+        <td>Agent-based installer flows</td>
+        <td><code>src/</code>, <code>cmd/</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Diff generation diagram -->
+<div class="diagram" style="margin-top: 24px;">
+  <div style="text-align: center; margin-bottom: 16px; color: var(--text2); font-size: 0.85rem;">HOW CODE DIFFS ARE GENERATED</div>
+  <div class="flow">
+    <div class="flow-node">
+      <div class="flow-node-label">BRANCH</div>
+      <div class="flow-node-value">release-4.x-1</div>
+    </div>
+    <div class="flow-arrow">↔</div>
+    <div class="flow-node">
+      <div class="flow-node-label">BRANCH</div>
+      <div class="flow-node-value">release-4.x</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node yellow">
+      <div class="flow-node-label">EXTRACT</div>
+      <div class="flow-node-value">git diff --stat</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node green">
+      <div class="flow-node-label">OUTPUT</div>
+      <div class="flow-node-value">Structured Summary</div>
+    </div>
+  </div>
+  <div style="text-align: center; margin-top: 12px; color: var(--text2); font-size: 0.85rem;">
+    New/deleted files, key code snippets, commit messages — filtered for doc-relevant paths only
+  </div>
+</div>
+
+<hr>
+
+<!-- Roadmap -->
+<h2>Path to Production</h2>
+<div class="grid-3">
+  <div class="card" style="border-color: var(--accent);">
+    <div class="card-header"><span class="pill pill-blue">Current</span></div>
+    <h3>Phase 1: Train</h3>
+    <ul style="color: var(--text2); font-size: 0.9rem; padding-left: 16px; line-height: 2;">
+      <li>Run iterations 4.17–4.22</li>
+      <li>Refine SKILL.md each round</li>
+      <li>Target: 95%+ similarity</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Phase 2: Validate</h3>
+    <ul style="color: var(--text2); font-size: 0.9rem; padding-left: 16px; line-height: 2;">
+      <li>Generate 4.22 from 4.21 + diff</li>
+      <li>Human review of output</li>
+      <li>Identify manual-edit needs</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Phase 3: Deploy</h3>
+    <ul style="color: var(--text2); font-size: 0.9rem; padding-left: 16px; line-height: 2;">
+      <li>Generate 4.23 (no ground truth)</li>
+      <li>Human review + publish</li>
+      <li>Automate via GitHub Actions</li>
+    </ul>
+  </div>
+</div>
+
+<div class="callout" style="margin-top: 32px;">
+  <strong>Bottom line:</strong> The ~8% gap (not derivable from code) always requires human review. The goal is automating the 92%+ mechanical work — not replacing technical writers entirely.
+</div>
+
+<div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text2); font-size: 0.85rem; text-align: center;">
+  OKD Documentation Automation POC — Red Hat OKD Team — 2026
+</div>
+
+</body>
+</html>

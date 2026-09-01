@@ -1,0 +1,79 @@
+// Module included in the following assemblies:
+//
+// * updating/updating_a_cluster/updating-cluster-cli.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-upgrading-oc-adm-upgrade-recommend_{context}"]
+= Finding recommended update paths with oc adm upgrade recommend
+
+When updating your cluster, the `oc adm upgrade` command returns a list of the next available versions. You can use the `oc adm upgrade recommend` command to narrow down your suggestions and recommend a new target release before you launch your update.
+
+The `oc adm upgrade recommend` command is read-only and cannot alter the state of your cluster.
+
+The command performs prechecks against your cluster, including checking for critical alerts and PodDisruptionBudget issues, and reports any conditions that might impact an update.
+
+.Procedure 
+
+. To list the recommended versions for your update, run the `oc adm upgrade recommend` command:
++
+[source,terminal]
+----
+$ oc adm upgrade recommend
+----
++
+.Example output
+
+[source,terminal]
+----
+Upstream is unset, so the cluster will use an appropriate default.
+Channel: stable-4.20 (available channels: candidate-4.19, candidate-4.20, eus-4.20, fast-4.19, fast-4.20, stable-4.19, stable-4.20)
+
+Updates to 4.20:
+
+Version: 4.20.5
+Image: quay.io/openshift-release-dev/ocp-release@sha256:6afb11e1cac46fd26476ca134072937115256b9c6360f7a1cd1812992c065f02
+Release URL: https://access.redhat.com/errata/RHSA-2026:1052
+
+Updates to 4.19:
+VERSION     ISSUES
+4.19.12     no known issues
+4.19.11     no known issues
+And 8 older 4.19 updates you can see with '--show-outdated-releases' or '--version VERSION'.
+----
+
+. To determine whether a specific version is recommended for your update, run the `oc adm upgrade recommend --version` command:
++
+[source,terminal]
+----
+$ oc adm upgrade recommend --version 4.20.5
+----
++
+.Example output
+
+[source,terminal]
+----
+Upstream is unset, so the cluster will use an appropriate default.
+Channel: stable-4.20 (available channels: candidate-4.19, candidate-4.20, eus-4.20, fast-4.19, fast-4.20, stable-4.19, stable-4.20)
+
+Update to 4.20.5 has no known issues relevant to this cluster.
+Image: quay.io/openshift-release-dev/ocp-release@sha256:6afb11e1cac46fd26476ca134072937115256b9c6360f7a1cd1812992c065f02
+Release URL: https://access.redhat.com/errata/RHSA-2026:1052
+----
+
+. To accept known issues when checking a specific version, use the `--accept` flag:
++
+[source,terminal]
+----
+$ oc adm upgrade recommend --version 4.20.5 --accept ConditionalUpdateRisk
+----
++
+The `--accept` flag takes a comma-delimited list of issue names that you find acceptable. When `--version` is set, any unaccepted issues result in a non-zero exit code. This is useful for automation scenarios where you want to gate updates on the absence of specific risks.
+
+. To reduce output verbosity when using `--version`, use the `--quiet` flag:
++
+[source,terminal]
+----
+$ oc adm upgrade recommend --version 4.20.5 --quiet
+----
++
+When `--quiet` is set with `--version`, only unaccepted issue names are printed. This is useful for scripting and CI/CD pipelines that need machine-readable output.

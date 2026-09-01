@@ -1,0 +1,10 @@
+// Module included in the following assemblies:
+//
+// * updating/preparing_for_updates/updating-cluster-prepare.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="update-preparing-list_{context}"]
+= Removed APIs
+
+[role="_abstract"]
+There are no Kubernetes API removals in {product-title} 4.21 (Kubernetes 1.34). No administrator acknowledgment is required to update from {product-title} 4.20 to 4.21.

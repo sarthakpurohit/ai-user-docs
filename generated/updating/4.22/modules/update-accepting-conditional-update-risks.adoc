@@ -1,0 +1,63 @@
+// Module included in the following assemblies:
+//
+// * updating/updating_a_cluster/updating-cluster-cli.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-accepting-conditional-update-risks_{context}"]
+= Accepting conditional update risks (Technology Preview)
+
+:FeatureName: oc adm upgrade accept
+include::snippets/technology-preview.adoc[]
+
+[role="_abstract"]
+You can use the `oc adm upgrade accept` command to manage which conditional update risks are considered acceptable for your cluster. A conditional update proceeds only if all of its associated risks are either not applicable to your cluster or have been explicitly accepted.
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+* You have installed the {oc-first}.
+* You have the `TechPreviewNoUpgrade` feature set enabled.
+* You have enabled the `oc adm upgrade accept` subcommand by setting the `OC_ENABLE_CMD_UPGRADE_ACCEPT_RISKS` environment variable:
++
+[source,terminal]
+----
+$ export OC_ENABLE_CMD_UPGRADE_ACCEPT_RISKS=true
+----
+
+.Procedure
+
+* To accept one or more risks, specify them as a comma-separated list:
++
+[source,terminal]
+----
+$ oc adm upgrade accept <RiskA>,<RiskB>
+----
++
+.Example output
+[source,terminal]
+----
+info: Accept risks are [RiskA, RiskB]
+----
+
+* To accept new risks and remove previously accepted risks, append `-` to the risk name:
++
+[source,terminal]
+----
+$ oc adm upgrade accept <RiskA>,<RiskB>,<RiskC>-
+----
++
+This example accepts `RiskA` and `RiskB` and removes `RiskC` from the accepted set.
+
+* To replace the entire set of accepted risks, use the `--replace` flag:
++
+[source,terminal]
+----
+$ oc adm upgrade accept --replace <RiskA>,<RiskB>
+----
+
+* To remove all accepted risks, use the `--clear` flag:
++
+[source,terminal]
+----
+$ oc adm upgrade accept --clear
+----

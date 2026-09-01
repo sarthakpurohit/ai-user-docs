@@ -1,0 +1,318 @@
+name: okd-install-docs-eval
+description: |
+  Evaluate the quality of AI-generated OKD/OpenShift installation documentation.
+  This eval compares generated AsciiDoc files against known-good human-written docs
+  using both deterministic code judges and semantic LLM judges.
+
+  Context: We have a SKILL.md that generates updated installation docs for OpenShift
+  version 4.x by taking version 4.x-1 docs + code diffs between release branches.
+  The evaluation measures how close the generated output is to the actual published docs.
+
+execution:
+  mode: case
+  skill: generate-install-docs
+  arguments: "{prev_docs_dir} {diff_path} --target-distro=ocp --output-dir={output_dir} --source-repos={source_repos}"
+  timeout: 1800
+  max_budget_usd: 10.0
+
+runner:
+  type: claude-code
+  effort: high
+  settings:
+    allowedTools:
+      - Read
+      - Write
+      - Glob
+      - Grep
+      - Shell
+      - StrReplace
+
+models:
+  skill: claude-opus-4-6
+  judge: claude-opus-4-6
+
+dataset:
+  path: eval/dataset/cases
+  schema: |
+    Each case directory represents one version-pair evaluation:
+    - input.yaml: Contains paths to previous docs, diff summary, source repos, and output dir.
+    - reference/: Directory containing the ground-truth (human-written) docs for the target version.
+      These are the actual published docs from openshift-docs enterprise-4.x branches.
+
+outputs:
+  - path: output
+    schema: |
+      The generated documentation directory. Contains:
+      - AsciiDoc assembly files (top-level .adoc files)
+      - modules/ directory with con-*, proc-*, ref-* modules
+      - _attributes/ with common-attributes.adoc
+      Should mirror the structure of the reference/ directory.
+
+judges:
+  # ─────────────────────────────────────────────────────────
+  # DETERMINISTIC JUDGES (fast, reproducible)
+  # ─────────────────────────────────────────────────────────
+
+  - name: file_coverage
+    description: |
+      Measures what percentage of reference files exist in the generated output.
+      Missing files are a hard failure — they represent entire topics not documented.
+    check: |
+      import os
+      ref_dir = os.path.join(os.environ.get("CASE_DIR", "."), "reference")
+      out_dir = outputs.get("output_dir", "output")
+      
+      ref_files = set()
+      for root, dirs, files in os.walk(ref_dir):
+          for f in files:
+              if f.endswith(".adoc"):
+                  rel = os.path.relpath(os.path.join(root, f), ref_dir)
+                  ref_files.add(rel)
+      
+      gen_files = set()
+      for root, dirs, files in os.walk(out_dir):
+          for f in files:
+              if f.endswith(".adoc"):
+                  rel = os.path.relpath(os.path.join(root, f), out_dir)
+                  gen_files.add(rel)
+      
+      if not ref_files:
+          return False, "No reference files found"
+      
+      present = ref_files & gen_files
+      missing = ref_files - gen_files
+      coverage = len(present) / len(ref_files)
+      
+      if coverage < 0.90:
+          return False, f"File coverage {coverage:.1%} ({len(missing)} missing: {sorted(missing)[:10]})"
+      return True, f"File coverage {coverage:.1%} ({len(present)}/{len(ref_files)} files present)"
+
+  - name: section_coverage
+    description: |
+      For each reference file, checks that all AsciiDoc section headers
+      (= Title, == Section, === Subsection) are present in generated output.
+    check: |
+      import os, re
+      ref_dir = os.path.join(os.environ.get("CASE_DIR", "."), "reference")
+      out_dir = outputs.get("output_dir", "output")
+      
+      total_sections = 0
+      matched_sections = 0
+      problem_files = []
+      
+      for root, dirs, files in os.walk(ref_dir):
+          for f in files:
+              if not f.endswith(".adoc"):
+                  continue
+              ref_path = os.path.join(root, f)
+              rel = os.path.relpath(ref_path, ref_dir)
+              gen_path = os.path.join(out_dir, rel)
+              
+              if not os.path.exists(gen_path):
+                  continue
+              
+              with open(ref_path) as rf:
+                  ref_sections = set(re.findall(r'^(=+ .+)$', rf.read(), re.MULTILINE))
+              with open(gen_path) as gf:
+                  gen_sections = set(re.findall(r'^(=+ .+)$', gf.read(), re.MULTILINE))
+              
+              total_sections += len(ref_sections)
+              matched = ref_sections & gen_sections
+              matched_sections += len(matched)
+              
+              if ref_sections and len(matched) / len(ref_sections) < 0.8:
+                  missing = ref_sections - gen_sections
+                  problem_files.append(f"{rel}: missing {sorted(missing)[:3]}")
+      
+      if total_sections == 0:
+          return False, "No sections found in reference"
+      
+      ratio = matched_sections / total_sections
+      if ratio < 0.90:
+          return False, f"Section coverage {ratio:.1%}. Problems: {problem_files[:5]}"
+      return True, f"Section coverage {ratio:.1%} ({matched_sections}/{total_sections})"
+
+  - name: parameter_accuracy
+    description: |
+      Checks that install-config parameter names (backtick-quoted values)
+      from reference docs appear in generated docs. These are the actual
+      field names users configure.
+    check: |
+      import os, re
+      ref_dir = os.path.join(os.environ.get("CASE_DIR", "."), "reference")
+      out_dir = outputs.get("output_dir", "output")
+      
+      total_params = 0
+      matched_params = 0
+      missing_params = []
+      
+      param_pattern = re.compile(r'`([a-zA-Z][a-zA-Z0-9_.]+)`')
+      
+      for root, dirs, files in os.walk(ref_dir):
+          for f in files:
+              if not f.endswith(".adoc"):
+                  continue
+              if "parameter" not in f and "config" not in f:
+                  continue
+              ref_path = os.path.join(root, f)
+              rel = os.path.relpath(ref_path, ref_dir)
+              gen_path = os.path.join(out_dir, rel)
+              
+              if not os.path.exists(gen_path):
+                  continue
+              
+              with open(ref_path) as rf:
+                  ref_params = set(param_pattern.findall(rf.read()))
+              with open(gen_path) as gf:
+                  gen_params = set(param_pattern.findall(gf.read()))
+              
+              total_params += len(ref_params)
+              matched = ref_params & gen_params
+              matched_params += len(matched)
+              
+              file_missing = ref_params - gen_params
+              if file_missing:
+                  missing_params.extend([f"{rel}:{p}" for p in sorted(file_missing)[:5]])
+      
+      if total_params == 0:
+          return True, "No parameter files to check"
+      
+      ratio = matched_params / total_params
+      if ratio < 0.90:
+          return False, f"Parameter coverage {ratio:.1%}. Missing: {missing_params[:10]}"
+      return True, f"Parameter coverage {ratio:.1%} ({matched_params}/{total_params})"
+
+  - name: no_hardcoded_product_names
+    description: |
+      Ensures generated docs use AsciiDoc attributes instead of hardcoded
+      product names. Catches "OpenShift Container Platform", "RHCOS", "RHEL"
+      outside of conditional blocks.
+    check: |
+      import os, re
+      out_dir = outputs.get("output_dir", "output")
+      
+      violations = []
+      patterns = [
+          (r'(?<!ifdef::)OpenShift Container Platform(?!\s*\})', "Use {product-title}"),
+          (r'\bRHCOS\b(?!\s*\})', "Use {op-system}"),
+          (r'\bRHEL\b(?!\s*\})', "Use {op-system-base}"),
+      ]
+      
+      for root, dirs, files in os.walk(out_dir):
+          for f in files:
+              if not f.endswith(".adoc"):
+                  continue
+              filepath = os.path.join(root, f)
+              rel = os.path.relpath(filepath, out_dir)
+              with open(filepath) as fh:
+                  content = fh.read()
+              
+              in_code_block = False
+              for i, line in enumerate(content.split("\n"), 1):
+                  if line.strip() == "----":
+                      in_code_block = not in_code_block
+                  if in_code_block:
+                      continue
+                  for pattern, msg in patterns:
+                      if re.search(pattern, line):
+                          violations.append(f"{rel}:{i} — {msg}")
+      
+      if len(violations) > 5:
+          return False, f"{len(violations)} hardcoded names found: {violations[:5]}"
+      return True, f"No significant hardcoded product names ({len(violations)} minor)"
+
+  - name: include_validity
+    description: |
+      Checks that every include:: directive in generated assemblies
+      points to a file that actually exists in the generated output.
+    check: |
+      import os, re
+      out_dir = outputs.get("output_dir", "output")
+      
+      broken = []
+      total = 0
+      
+      for root, dirs, files in os.walk(out_dir):
+          for f in files:
+              if not f.endswith(".adoc"):
+                  continue
+              filepath = os.path.join(root, f)
+              rel = os.path.relpath(filepath, out_dir)
+              with open(filepath) as fh:
+                  for i, line in enumerate(fh, 1):
+                      m = re.match(r'include::(modules/[^\[]+)\[', line)
+                      if m:
+                          total += 1
+                          target = os.path.join(out_dir, m.group(1))
+                          if not os.path.exists(target):
+                              broken.append(f"{rel}:{i} -> {m.group(1)}")
+      
+      if total == 0:
+          return True, "No include directives found"
+      
+      if broken:
+          return False, f"{len(broken)}/{total} broken includes: {broken[:5]}"
+      return True, f"All {total} include directives resolve correctly"
+
+  # ─────────────────────────────────────────────────────────
+  # LLM JUDGES (semantic understanding)
+  # ─────────────────────────────────────────────────────────
+
+  - name: semantic_accuracy
+    description: |
+      LLM judge that compares generated docs against reference for semantic
+      accuracy — not just word-matching, but whether the MEANING and FACTS
+      are correct. Evaluates a sample of files.
+    feedback_type: int
+    score_range: [1, 5]
+    prompt_file: eval/prompts/semantic-accuracy-judge.md
+
+  - name: completeness_judge
+    description: |
+      LLM judge that evaluates whether all features/changes from the code diff
+      are properly reflected in the generated documentation.
+    feedback_type: int
+    score_range: [1, 5]
+    prompt_file: eval/prompts/completeness-judge.md
+
+  - name: structure_quality
+    description: |
+      LLM judge that evaluates whether the generated docs follow OpenShift
+      documentation conventions (module types, assembly structure, procedure
+      format, admonitions, etc.)
+    feedback_type: int
+    score_range: [1, 5]
+    prompt_file: eval/prompts/structure-quality-judge.md
+
+  - name: parameter_description_quality
+    description: |
+      Agent judge that reads the source code and verifies parameter descriptions
+      in the generated docs match what the code defines. This is the highest-value
+      judge — it uses source code as ground truth.
+    feedback_type: int
+    score_range: [0, 2]
+    samples: 1
+    agent:
+      runner: {type: claude-code, effort: high}
+      allowed_tools: [Read, Grep, Glob, Shell]
+      context: [installer/pkg/types/]
+      inputs: [output]
+      timeout: 600
+      max_budget_usd: 3.0
+    prompt_file: eval/prompts/parameter-grounded-judge.md
+
+thresholds:
+  file_coverage:
+    min_pass_rate: 1.0
+  section_coverage:
+    min_pass_rate: 1.0
+  parameter_accuracy:
+    min_pass_rate: 1.0
+  semantic_accuracy:
+    min_mean: 3.5
+  completeness_judge:
+    min_mean: 3.0
+  structure_quality:
+    min_mean: 4.0
+  parameter_description_quality:
+    min_mean: 1.5

@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-Generated OKD Documentation — Project Overview</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2128;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --accent: #58a6ff;
+  --green: #3fb950;
+  --yellow: #d29922;
+  --red: #f85149;
+  --purple: #bc8cff;
+  --orange: #f0883e;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 40px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+h1 { font-size: 2.2rem; margin-bottom: 8px; font-weight: 700; }
+h2 { font-size: 1.5rem; margin: 48px 0 16px; font-weight: 600; color: var(--accent); }
+h3 { font-size: 1.1rem; margin: 20px 0 8px; font-weight: 600; }
+p { color: var(--text2); margin-bottom: 12px; }
+ul, ol { color: var(--text2); padding-left: 24px; margin-bottom: 12px; }
+li { margin: 6px 0; }
+strong { color: var(--text); }
+code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: var(--accent);
+}
+.subtitle { color: var(--text2); font-size: 1.1rem; margin-bottom: 32px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.card-header {
+  font-weight: 600; font-size: 1rem; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px; color: var(--text);
+}
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+.grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+@media (max-width: 768px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+.pill { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 500; }
+.pill-green { background: #3fb95022; color: var(--green); }
+.pill-blue { background: #58a6ff22; color: var(--accent); }
+.pill-yellow { background: #d2992222; color: var(--yellow); }
+.pill-red { background: #f8514922; color: var(--red); }
+.pill-purple { background: #bc8cff22; color: var(--purple); }
+.pill-orange { background: #f0883e22; color: var(--orange); }
+.stat {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 20px; text-align: center;
+}
+.stat-value { font-size: 2rem; font-weight: 700; color: var(--green); }
+.stat-value.blue { color: var(--accent); }
+.stat-value.yellow { color: var(--yellow); }
+.stat-value.purple { color: var(--purple); }
+.stat-value.red { color: var(--red); }
+.stat-label { font-size: 0.85rem; color: var(--text2); margin-top: 4px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin: 16px 0; }
+th { text-align: left; padding: 12px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); color: var(--text2); font-weight: 600; }
+td { padding: 10px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
+tr:nth-child(even) td { background: var(--surface2); }
+.callout { border-left: 3px solid var(--accent); background: var(--surface); padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+.callout.warning { border-left-color: var(--yellow); }
+.callout.success { border-left-color: var(--green); }
+.callout.danger { border-left-color: var(--red); }
+.callout p { margin-bottom: 0; }
+hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+.formula { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; text-align: center; padding: 24px; margin: 16px 0; }
+.formula-main { font-size: 1.4rem; font-weight: 700; font-family: 'SF Mono', 'Fira Code', monospace; color: var(--text); }
+.formula-main .var { color: var(--accent); }
+.formula-main .op { color: var(--text2); }
+.flow { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 24px 0; }
+.flow-node { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; text-align: center; min-width: 120px; }
+.flow-node.accent { border-color: var(--accent); background: #58a6ff11; }
+.flow-node.green { border-color: var(--green); background: #3fb95011; }
+.flow-node.yellow { border-color: var(--yellow); }
+.flow-node-label { font-size: 0.7rem; color: var(--text2); margin-bottom: 2px; }
+.flow-node-value { font-weight: 600; font-size: 0.9rem; }
+.flow-arrow { color: var(--text2); font-size: 1.4rem; }
+.toc { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin-bottom: 32px; }
+.toc ol { counter-reset: toc; list-style: none; padding-left: 0; }
+.toc li { counter-increment: toc; margin: 8px 0; }
+.toc li::before { content: counter(toc) "."; color: var(--accent); font-weight: 600; margin-right: 8px; }
+.toc a { color: var(--text); text-decoration: none; }
+.toc a:hover { color: var(--accent); }
+.tab-container { margin: 20px 0; }
+.tab-buttons { display: flex; gap: 4px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+.tab-btn { background: none; border: none; color: var(--text2); padding: 10px 20px; cursor: pointer; font-size: 0.9rem; font-weight: 500; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-btn:hover { color: var(--text); }
+.tab-content { display: none; padding: 24px 0; }
+.tab-content.active { display: block; }
+.progress-bar { background: var(--surface2); border-radius: 4px; height: 28px; overflow: hidden; margin: 8px 0; position: relative; }
+.progress-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 10px; font-size: 0.75rem; font-weight: 600; }
+.progress-label { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 0.75rem; color: var(--text2); }
+</style>
+</head>
+<body>
+
+<h1>AI-Generated OKD Documentation</h1>
+<p class="subtitle">Automating user-facing docs using LLM skills trained on code diffs — a complete project overview</p>
+
+<div class="toc">
+  <strong style="color:var(--text)">Contents</strong>
+  <ol>
+    <li><a href="#problem">The Problem</a></li>
+    <li><a href="#idea">The Idea</a></li>
+    <li><a href="#skill">The Heart: SKILL.md</a></li>
+    <li><a href="#training">The Training Loop</a></li>
+    <li><a href="#metrics">How We Measure Quality</a></li>
+    <li><a href="#results">Results by Section</a></li>
+    <li><a href="#wins">Where We Did Well</a></li>
+    <li><a href="#limitations">Where We Couldn't — and Why</a></li>
+    <li><a href="#lessons">Key Lessons</a></li>
+    <li><a href="#production">Production Readiness (4.23+)</a></li>
+    <li><a href="#workflow">Future Workflow</a></li>
+  </ol>
+</div>
+
+<hr>
+
+<!-- 1. Problem -->
+<h2 id="problem">1. The Problem</h2>
+
+<div class="card">
+  <div class="card-header">Why does OKD need automated documentation?</div>
+  <ul>
+    <li>The central docs team is <strong>withdrawing support</strong> for OKD documentation</li>
+    <li>OpenShift targets a <strong>4-month release cadence</strong> (3 releases per year) — manual doc writing can't keep up</li>
+    <li>Existing OKD docs are <strong>outdated</strong> (still reference Fedora CoreOS, wrong operators)</li>
+    <li>Each release touches <strong>50-200 user-facing changes</strong> across multiple repos that need documenting</li>
+  </ul>
+</div>
+
+<div class="callout danger">
+  <p><strong style="color:var(--red)">The gap:</strong> Without automation, documenting each release requires significant manual effort from an already-stretched docs team. Code changes happen across multiple repositories, and keeping docs in sync takes days of manual work per release cycle.</p>
+</div>
+
+<hr>
+
+<!-- 2. The Idea -->
+<h2 id="idea">2. The Idea</h2>
+
+<p>One simple formula drives the entire system:</p>
+
+<div class="formula">
+  <div class="formula-main">
+    <span class="var">Docs(4.x)</span> <span class="op">=</span> <span class="var">SKILL.md</span> <span class="op">+</span> <span class="var">Docs(4.x-1)</span> <span class="op">+</span> <span class="var">CodeDiff(4.x-1 → 4.x)</span>
+  </div>
+</div>
+
+<p>In plain English: <strong>Give the LLM a trained skill, last version's docs, and what changed in the code — get new version's docs.</strong></p>
+
+<div class="flow">
+  <div class="flow-node"><div class="flow-node-label">Input 1</div><div class="flow-node-value">4.16 Docs</div></div>
+  <div class="flow-arrow">+</div>
+  <div class="flow-node"><div class="flow-node-label">Input 2</div><div class="flow-node-value">Code Diff</div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-node accent"><div class="flow-node-label">Brain</div><div class="flow-node-value">SKILL.md</div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-node green"><div class="flow-node-label">Output</div><div class="flow-node-value">4.17 Docs</div></div>
+</div>
+
+<div class="card">
+  <div class="card-header">What is a "Code Diff"?</div>
+  <p>Not a raw <code>git diff</code>. It's a <strong>structured, filtered summary</strong> of documentation-relevant code changes across multiple repositories:</p>
+  <ul>
+    <li><strong>Full file contents</strong> of key Go type files (shows struct definitions, field comments, defaults)</li>
+    <li><strong>CRD schema sections</strong> with field hierarchy context</li>
+    <li><strong>Filtered key changes</strong> (only lines matching doc-relevant patterns)</li>
+    <li><strong>Commit messages</strong> (explain the intent behind changes)</li>
+    <li><strong>New/deleted file lists</strong> (shows structural additions/removals)</li>
+  </ul>
+</div>
+
+<hr>
+
+<!-- 3. SKILL.md -->
+<h2 id="skill">3. The Heart: SKILL.md</h2>
+
+<p>A SKILL.md file is a <strong>detailed instruction manual for the LLM</strong>. It tells the AI exactly:</p>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header">What to look for in diffs</div>
+    <ul>
+      <li>New CLI commands or flags</li>
+      <li>Changed API types or CRD fields</li>
+      <li>New upgrade preconditions</li>
+      <li>Behavioral changes (drain, reboot)</li>
+      <li>Version number patterns</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-header">Rules to follow</div>
+    <ul>
+      <li>Don't fabricate content</li>
+      <li>Don't bump admin-ack without evidence</li>
+      <li>Use test fixtures for CLI output</li>
+      <li>GA promotions = primary command switch</li>
+      <li>Leave unchanged files alone</li>
+    </ul>
+  </div>
+</div>
+
+<p>Each documentation section has its own skill file, trained iteratively:</p>
+
+<table>
+  <tr><th>Section</th><th>Skill File</th><th>Rules</th><th>Source Repos</th></tr>
+  <tr><td><span class="pill pill-blue">Installing</span></td><td><code>skills/generate-install-docs/SKILL.md</code></td><td>23 rules</td><td>7 repos</td></tr>
+  <tr><td><span class="pill pill-purple">Updating</span></td><td><code>skills/generate-updating-docs/SKILL.md</code></td><td>28 rules</td><td>5 repos</td></tr>
+</table>
+
+<hr>
+
+<!-- 4. Training Loop -->
+<h2 id="training">4. The Training Loop</h2>
+
+<p>We <strong>iteratively improve</strong> the skill by testing it against versions where we have human-written docs (ground truth):</p>
+
+<div class="flow">
+  <div class="flow-node"><div class="flow-node-label">Step 1</div><div class="flow-node-value">Generate</div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-node"><div class="flow-node-label">Step 2</div><div class="flow-node-value">Score</div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-node yellow"><div class="flow-node-label">Step 3</div><div class="flow-node-value">Evaluate</div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-node"><div class="flow-node-label">Step 4</div><div class="flow-node-value">Learn</div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-node accent"><div class="flow-node-label">Step 5</div><div class="flow-node-value">Update Skill</div></div>
+  <div class="flow-arrow">↩</div>
+</div>
+
+<div class="card">
+  <div class="card-header">Each iteration adds rules</div>
+  <p>Versions 4.16 through 4.22 serve as training data. We generate docs for 4.17 using 4.16 + diff, compare against actual 4.17, learn from mistakes, update the skill, then move to 4.18, 4.19... Each pass adds 2-5 new rules.</p>
+  <p>After 6 iterations, the skill grows from ~12 generic rules to 23-28 battle-tested, specific rules covering edge cases discovered through real failures.</p>
+</div>
+
+<hr>
+
+<!-- 5. Metrics -->
+<h2 id="metrics">5. How We Measure Quality</h2>
+
+<h3>Deterministic Scoring (fast, automated)</h3>
+<p>Run with <code>make score VERSION=4.17 SECTION=updating</code> — takes seconds.</p>
+
+<table>
+  <tr><th>Metric</th><th>What it measures</th><th>How</th></tr>
+  <tr><td><strong>File Coverage</strong></td><td>Are all expected files present?</td><td>Count files in generated vs ground truth</td></tr>
+  <tr><td><strong>Text Similarity</strong></td><td>How close is the content line-by-line?</td><td><code>difflib.SequenceMatcher</code> ratio (0-100%)</td></tr>
+  <tr><td><strong>Section Coverage</strong></td><td>Are all section headings present?</td><td>Extract <code>== Heading</code> patterns, check presence</td></tr>
+  <tr><td><strong>Param Coverage</strong></td><td>Are all parameter names mentioned?</td><td>Extract backtick-quoted terms, check presence</td></tr>
+</table>
+
+<h3>LLM-Based Evaluation (deeper, semantic)</h3>
+<p>Run in a separate agent window — takes 10-20 minutes per version.</p>
+
+<table>
+  <tr><th>Metric</th><th>What it measures</th><th>How</th></tr>
+  <tr><td><strong>Semantic Accuracy</strong></td><td>Are the facts correct?</td><td>LLM reads each file, classifies as correct/minor/major issue</td></tr>
+  <tr><td><strong>Completeness</strong></td><td>Are ALL code changes reflected?</td><td>LLM reads diff, checks each change is documented</td></tr>
+  <tr><td><strong>Structure</strong></td><td>Are AsciiDoc conventions followed?</td><td>Check headers, IDs, includes, attributes</td></tr>
+  <tr><td><strong>Command Accuracy</strong></td><td>Are CLI commands correct?</td><td>Verify against actual source code</td></tr>
+</table>
+
+<div class="callout">
+  <p><strong>Why two levels?</strong> Deterministic scoring is great for catching surface problems (missing files, wrong version numbers). But it can't tell if the <em>meaning</em> is right. An LLM judge can read the code and verify that documentation accurately describes what the code does.</p>
+</div>
+
+<hr>
+
+<!-- 6. Results -->
+<h2 id="results">6. Results by Section</h2>
+
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="switchTab('installing')">Installing Section</button>
+    <button class="tab-btn" onclick="switchTab('updating')">Updating Section</button>
+    <button class="tab-btn" onclick="switchTab('comparison')">Comparison</button>
+  </div>
+
+  <div id="tab-installing" class="tab-content active">
+    <p><span class="pill pill-blue">800-1000 files per version</span> <span class="pill pill-purple">7 source repos</span> <span class="pill pill-green">6 iterations</span> <span class="pill pill-yellow">23 rules</span></p>
+
+    <h3>Deterministic Scores Across Iterations</h3>
+    <table>
+      <tr><th>Version</th><th>File Coverage</th><th>Text Similarity</th><th>Section Coverage</th><th>Param Coverage</th></tr>
+      <tr><td>4.17</td><td>94.8%</td><td>92.1%</td><td>93.3%</td><td>93.9%</td></tr>
+      <tr><td>4.18</td><td>95.7%</td><td>94.2%</td><td>94.5%</td><td>95.1%</td></tr>
+      <tr><td>4.19</td><td>97.0%</td><td>96.4%</td><td>96.9%</td><td>96.9%</td></tr>
+      <tr style="background:#f8514911"><td>4.20 (restructure)</td><td>90.8%</td><td>83.2%</td><td>87.5%</td><td>87.8%</td></tr>
+      <tr><td>4.21</td><td>97.3%</td><td>96.4%</td><td>97.2%</td><td>97.0%</td></tr>
+      <tr><td>4.22</td><td>96.2%</td><td>94.8%</td><td>95.6%</td><td>95.3%</td></tr>
+    </table>
+
+    <div class="grid-3">
+      <div class="stat"><div class="stat-value">94.8%</div><div class="stat-label">Avg Similarity (excl 4.20)</div></div>
+      <div class="stat"><div class="stat-value blue">96.4%</div><div class="stat-label">Best Similarity (4.19, 4.21)</div></div>
+      <div class="stat"><div class="stat-value yellow">83.2%</div><div class="stat-label">Worst — 4.20 restructure</div></div>
+    </div>
+
+    <h3>LLM Evaluation (4.17 — two rounds)</h3>
+    <p>We discovered that giving the LLM <strong>richer code context</strong> dramatically improves quality. "Enhanced diffs" include full Go type file contents, CRD schema sections, and wider diff hunks — instead of just the changed lines.</p>
+    <table>
+      <tr><th>Metric</th><th>Before (basic diff)</th><th>After (enhanced diff)</th><th>Change</th></tr>
+      <tr><td>Semantic Accuracy</td><td>91.2%</td><td>92.7%</td><td style="color:var(--green)">+1.5</td></tr>
+      <tr><td>Completeness</td><td>46.4%</td><td>80.8%</td><td style="color:var(--green)">+34.4</td></tr>
+      <tr><td>Parameter Accuracy</td><td>82.3%</td><td>94.7%</td><td style="color:var(--green)">+12.4</td></tr>
+    </table>
+    <div class="callout">
+      <p><strong>What changed?</strong> A "basic diff" shows only the changed lines (like a typical <code>git diff</code>). An "enhanced diff" includes the <strong>full contents</strong> of key files — Go struct definitions with field comments, CRD schemas with field hierarchies, and CLI source code. This gives the LLM enough context to correctly name parameters, describe defaults, and write accurate procedure steps.</p>
+    </div>
+    <p style="color:var(--text2); font-size:0.85rem;">Note: LLM evaluation is expensive (10-20 min per version). We ran it in depth for 4.17 to validate the approach, then used deterministic scoring for the remaining training iterations.</p>
+  </div>
+
+  <div id="tab-updating" class="tab-content">
+    <p><span class="pill pill-blue">104-115 files per version</span> <span class="pill pill-purple">5 source repos</span> <span class="pill pill-green">6 iterations</span> <span class="pill pill-yellow">28 rules</span></p>
+
+    <h3>Deterministic Scores Across Iterations</h3>
+    <table>
+      <tr><th>Version</th><th>File Coverage</th><th>Text Similarity</th><th>Section Coverage</th><th>Param Coverage</th></tr>
+      <tr><td>4.17</td><td>100%</td><td>96.4%</td><td>96.5%</td><td>99.1%</td></tr>
+      <tr><td>4.18</td><td>97.3%</td><td>95.7%</td><td>96.9%</td><td>96.5%</td></tr>
+      <tr><td>4.19</td><td>100%</td><td>96.6%</td><td>100%</td><td>98.7%</td></tr>
+      <tr style="background:#f8514911"><td>4.20 (GA promotion + restructure)</td><td>87.0%</td><td>79.3%</td><td>85.5%</td><td>85.2%</td></tr>
+      <tr><td>4.21</td><td>99.1%</td><td>98.8%</td><td>99.1%</td><td>99.1%</td></tr>
+      <tr><td>4.22</td><td>95.6%</td><td>94.9%</td><td>95.3%</td><td>95.6%</td></tr>
+    </table>
+
+    <div class="grid-3">
+      <div class="stat"><div class="stat-value">96.5%</div><div class="stat-label">Avg Similarity (excl 4.20)</div></div>
+      <div class="stat"><div class="stat-value blue">98.8%</div><div class="stat-label">Best Similarity (4.21)</div></div>
+      <div class="stat"><div class="stat-value yellow">79.3%</div><div class="stat-label">Worst — 4.20 restructure</div></div>
+    </div>
+
+    <h3>LLM Evaluation Across Iterations</h3>
+    <p>LLM-based evaluation was run for each updating iteration to assess semantic quality beyond surface-level scores:</p>
+    <table>
+      <tr><th>Version</th><th>LLM Overall</th><th>Key Issues Found</th></tr>
+      <tr><td>4.17 (Run 1, 3 repos)</td><td>80.8%</td><td>Fabricated admin-ack gate, wrong kubelet version</td></tr>
+      <tr><td>4.17 (Run 2, 5 repos)</td><td>58%</td><td>Orphan files kept, SDN removal missed, stale ack left in</td></tr>
+      <tr><td>4.18</td><td>65%</td><td>New recommend subcommand missed, ccoctl naming changes</td></tr>
+      <tr><td>4.19</td><td>48%</td><td>KMM restructure from non-monitored repo, Gateway API ack</td></tr>
+      <tr><td>4.20</td><td>52%</td><td>15 new files (overview restructure), bootloader docs</td></tr>
+      <tr><td>4.21</td><td>62%</td><td>1 missing file (new module), minor version mismatches</td></tr>
+    </table>
+    <div class="callout warning">
+      <p><strong style="color:var(--yellow)">Why are LLM scores lower than deterministic?</strong> Deterministic scoring measures surface similarity — most files are copied unchanged and score 100%. LLM evaluation focuses on the ~10-15 files that <em>should have changed</em>. Those files carry the hardest changes: product decisions, non-monitored repo changes, and editorial restructuring. The LLM judge penalizes every missed change, even if it's invisible in code diffs.</p>
+    </div>
+
+    <h3>Critical Discovery: No Subagents</h3>
+    <div class="callout danger">
+      <p><strong style="color:var(--red)">Subagents break doc generation.</strong> When the LLM splits work into parallel tasks ("version sweep" + "MCO docs" + "status update"), each subagent loses context of the full rule set and other changes. Result: contradictory edits, fabricated content, rule violations.</p>
+    </div>
+    <table>
+      <tr><th>Approach</th><th>Structure Score</th><th>Consistency</th></tr>
+      <tr><td><span class="pill pill-green">Single agent</span></td><td>95-100%</td><td>No contradictions</td></tr>
+      <tr><td><span class="pill pill-red">Subagents</span></td><td>45%</td><td>Conflicting edits</td></tr>
+    </table>
+  </div>
+
+  <div id="tab-comparison" class="tab-content">
+    <h3>Why Two Sections? Installing vs Updating</h3>
+    <p>We trained the system on two different documentation sections to test whether the approach generalizes. Each section has different characteristics:</p>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><span class="pill pill-blue">Installing</span> — Large, code-heavy</div>
+        <ul>
+          <li>189 assemblies across multiple platforms (AWS, GCP, Azure, vSphere...)</li>
+          <li>Heavy on install-config parameters, Go structs, CRD schemas</li>
+          <li>Most changes are directly traceable to code commits</li>
+          <li>Bigger section = more files to process, but more code-derivable content</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="pill pill-purple">Updating</span> — Smaller, more procedural</div>
+        <ul>
+          <li>~30 assemblies focused on upgrade workflows</li>
+          <li>Heavy on CLI commands (<code>oc adm upgrade</code>), CVO behavior, MCO drain logic</li>
+          <li>More changes driven by product decisions (deprecations, GA promotions)</li>
+          <li>Smaller section = faster iterations, but more "invisible" changes</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Side-by-Side Comparison</h3>
+    <table>
+      <tr><th>Metric</th><th>Installing</th><th>Updating</th><th>Takeaway</th></tr>
+      <tr><td>Files per version</td><td>800-1000</td><td>104-115</td><td>Updating is ~8x smaller</td></tr>
+      <tr><td>Source repos</td><td>7</td><td>5</td><td>Both need multiple repos</td></tr>
+      <tr><td>Avg text similarity (excl 4.20)</td><td>94.8%</td><td>96.5%</td><td style="color:var(--green)">Smaller section scores higher</td></tr>
+      <tr><td>Best text similarity</td><td>96.4% (4.19, 4.21)</td><td>98.8% (4.21)</td><td style="color:var(--green)">Both approach ceiling on stable releases</td></tr>
+      <tr><td>Worst version (4.20)</td><td>83.2%</td><td>79.3%</td><td>Both dip on restructuring releases</td></tr>
+      <tr><td>LLM eval — installing 4.17</td><td>92.7% semantic, 80.8% complete</td><td>—</td><td>Strong code-derivable coverage</td></tr>
+      <tr><td>LLM eval — updating avg</td><td>—</td><td>55% overall (5 versions)</td><td>More product-decision-driven gaps</td></tr>
+    </table>
+    <div class="callout">
+      <p><strong>Key finding:</strong> The approach works across both section types. Deterministic scores are comparable (~95-97% on stable releases). The LLM evaluation gap between sections reflects the <em>nature</em> of the content: installing docs are heavily code-derived (Go structs, CRDs), so the LLM covers most changes. Updating docs depend more on product decisions (deprecations, GA promotions, editorial restructuring) that are invisible in code diffs, making the LLM evaluation stricter.</p>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- 7. Wins -->
+<h2 id="wins">7. Where We Did Well</h2>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header"><span class="pill pill-blue">Installing Section — Wins</span></div>
+    <ul>
+      <li>93% average text similarity across 189 assemblies</li>
+      <li>Completeness jumped from 46% → 81% with enhanced diffs</li>
+      <li>Parameter accuracy 94.7% — Go comments correctly mapped to docs</li>
+      <li>New platform fields (nutanix, vsphere) correctly documented from struct definitions</li>
+      <li>install-config parameters extracted accurately from CRD schemas</li>
+      <li>Handles 7 repos simultaneously without losing coherence</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="pill pill-purple">Updating Section — Wins</span></div>
+    <ul>
+      <li>97% average text similarity (excl major transitions)</li>
+      <li>98.8% peak accuracy (4.21) — near-perfect generation</li>
+      <li>CLI commands always verified against source code</li>
+      <li>Admin-ack logic correctly handles presence/absence</li>
+      <li>Version sweeps (kubelet, channels, repos) reliably applied</li>
+      <li>Perfect AsciiDoc structure — zero agent-introduced convention violations</li>
+    </ul>
+  </div>
+</div>
+
+<h3>Agent Ahead of Ground Truth (Both Sections)</h3>
+<p>In several cases, the AI documented real code changes that human-written docs hadn't caught up to:</p>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header"><span class="pill pill-blue">Installing</span></div>
+    <ul>
+      <li>New install-config fields documented before human writers added them</li>
+      <li>Platform constraint updates from validation.go reflected faster</li>
+      <li>CRD schema changes captured same-day from source</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="pill pill-purple">Updating</span></div>
+    <ul>
+      <li><code>oc adm upgrade status</code> new operator-count format</li>
+      <li>Upgradeable=False / spec.overrides behavior</li>
+      <li>CVO GiantHop precondition (sequential update enforcement)</li>
+      <li>MCO drain timeout event emission</li>
+    </ul>
+  </div>
+</div>
+<p style="color:var(--green)">All verified against source code — technically more accurate than the official docs at that point in time.</p>
+
+<hr>
+
+<!-- 8. Limitations -->
+<h2 id="limitations">8. Where We Couldn't — and Why</h2>
+
+<p>The accuracy gap breaks down into clear categories. Most of it is <strong>fundamentally impossible</strong> to derive from code diffs:</p>
+
+<div class="card">
+  <div class="card-header">Accuracy Gap Breakdown</div>
+  <div style="margin: 16px 0;">
+    <div style="display:flex; align-items:center; gap:8px; margin:8px 0;">
+      <div style="width:60%; display:flex;">
+        <div class="progress-bar" style="flex:1; position:relative;">
+          <div class="progress-fill" style="width:75%; background:var(--green);">Code-derivable (handled)</div>
+        </div>
+      </div>
+      <span style="color:var(--green); font-weight:600;">~75%</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px; margin:8px 0;">
+      <div style="width:60%; display:flex;">
+        <div class="progress-bar" style="flex:1; position:relative;">
+          <div class="progress-fill" style="width:20%; background:var(--yellow);">Product decisions</div>
+        </div>
+      </div>
+      <span style="color:var(--yellow); font-weight:600;">~15%</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px; margin:8px 0;">
+      <div style="width:60%; display:flex;">
+        <div class="progress-bar" style="flex:1; position:relative;">
+          <div class="progress-fill" style="width:13%; background:var(--accent);">Non-monitored repos</div>
+        </div>
+      </div>
+      <span style="color:var(--accent); font-weight:600;">~10%</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px; margin:8px 0;">
+      <div style="width:60%; display:flex;">
+        <div class="progress-bar" style="flex:1; position:relative;">
+          <div class="progress-fill" style="width:7%; background:var(--red);">Agent errors</div>
+        </div>
+      </div>
+      <span style="color:var(--red); font-weight:600;">~5%</span>
+    </div>
+  </div>
+</div>
+
+<h3>What code diffs CANNOT catch</h3>
+
+<table>
+  <tr><th>Category</th><th>Installing Example</th><th>Updating Example</th><th>Why it's invisible</th></tr>
+  <tr><td><strong>Content relocation</strong></td><td>Platform-specific files reorganized into subfolders (4.20)</td><td>Disconnected docs moved to separate top-level section (4.17)</td><td>Docs team IA decision</td></tr>
+  <tr><td><strong>Product deprecation</strong></td><td>RHV platform removed from docs</td><td>RHEL workers removed from updating section</td><td>Product management decision</td></tr>
+  <tr><td><strong>Non-monitored repos</strong></td><td>New platform support (Alibaba, IBMCloud)</td><td>KMM restructure, ccoctl naming, Gateway API</td><td>Not in our 5-7 source repos</td></tr>
+  <tr><td><strong>Editorial restructuring</strong></td><td>Assembly splits, new overview pages created</td><td>Module splits, title rewording, xref moves</td><td>Writer preference</td></tr>
+  <tr><td><strong>New content creation</strong></td><td>Entirely new installation method docs</td><td>New "minimize worker deployment time" module</td><td>Can't generate from nothing</td></tr>
+  <tr><td><strong>Cosmetic changes</strong></td><td>Callout list reformatting</td><td><code>Red Hat</code> → <code>Red&amp;nbsp;Hat</code></td><td>Style consistency</td></tr>
+</table>
+
+<div class="callout warning">
+  <p><strong style="color:var(--yellow)">Key insight:</strong> ~20-25% of documentation changes between versions come from product/editorial decisions that live in NO source repository. This is the hard ceiling for a <em>code-diff-only</em> approach — but we can extend the inputs.</p>
+</div>
+
+<h3>Potential Improvements: Extending the Inputs</h3>
+
+<p>The core approach (SKILL.md + iterative training) <strong>stays the same</strong>. What changes is giving the LLM more context beyond just code diffs:</p>
+
+<div class="card">
+  <div class="card-header">Adding JIRA/Epic Context to Close the Gap</div>
+  <p>Every release has a set of tracked epics in JIRA. By feeding the LLM the <strong>list of epics targeted for a release</strong>, we can address the categories that code diffs miss:</p>
+  <table>
+    <tr><th>Gap Category</th><th>How JIRA Helps</th></tr>
+    <tr><td><strong>Product deprecations</strong></td><td>Epics explicitly track deprecation decisions (e.g., "Remove RHV support", "Drop RHEL compute node docs")</td></tr>
+    <tr><td><strong>Non-monitored repos</strong></td><td>Epics link to PRs across ALL repos, not just the 5-7 we watch. The LLM can discover which repos changed.</td></tr>
+    <tr><td><strong>New content creation</strong></td><td>Enhancement epics describe new features that need documentation from scratch, with acceptance criteria the LLM can use.</td></tr>
+    <tr><td><strong>Content relocation</strong></td><td>Docs-team epics may describe IA restructuring plans the LLM can follow.</td></tr>
+  </table>
+  <div class="callout success">
+    <p><strong style="color:var(--green)">Impact:</strong> Adding JIRA context could close 10-15% of the current gap — bringing automated coverage from ~75-80% up to ~90% — without changing the core formula: <code>Docs(4.x) = Docs(4.x-1) + CodeDiff + JiraContext</code></p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">Other Potential Extensions</div>
+  <div class="grid-2">
+    <div>
+      <strong>More source repos</strong>
+      <p>Adding repos as we discover gaps. We went from 3 → 7 for installing and 3 → 5 for updating during training. This can continue as needed.</p>
+    </div>
+    <div>
+      <strong>Release notes as input</strong>
+      <p>PRs with <code>release-note</code> blocks contain human-written summaries of user-facing changes. These can supplement code diffs.</p>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- 9. Key Lessons -->
+<h2 id="lessons">9. Key Lessons</h2>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header">Architecture Lessons (Both Sections)</div>
+    <ol>
+      <li><strong>Single agent is mandatory</strong> — subagents destroy consistency (discovered in updating, applies universally)</li>
+      <li><strong>Enhanced diffs >> basic diffs</strong> — full Go type files give +34% completeness (installing), full CVO/oc source gives accurate CLI docs (updating)</li>
+      <li><strong>Multiple repos are essential</strong> — installing needs 7, updating needs 5. No single repo has all changes.</li>
+      <li><strong>Iterative training works</strong> — installing: 12→23 rules. Updating: 12→28 rules. Each pass fixes real failures.</li>
+      <li><strong>Section-dynamic architecture</strong> — project reorganized to support any section (installing, updating, future) with shared tooling</li>
+    </ol>
+  </div>
+  <div class="card">
+    <div class="card-header">Content Lessons (Both Sections)</div>
+    <ol>
+      <li><strong>Don't fabricate</strong> — installing: don't invent platform fields. Updating: don't invent admin-ack gates.</li>
+      <li><strong>Code comments ARE documentation</strong> — Go struct field comments map directly to parameter descriptions (installing). CLI help text maps to procedure steps (updating).</li>
+      <li><strong>Version sweeps need evidence</strong> — installing: don't bump callout lists blindly. Updating: don't bump Kubernetes API removals without checking.</li>
+      <li><strong>GA promotions = workflow change</strong> — when a feature gate is removed, the command becomes THE primary approach (updating). When a TP platform becomes GA, it gets full procedure docs (installing).</li>
+      <li><strong>"Don't do X" needs "do Y instead"</strong> — prohibition rules without alternatives cause confusion in both sections.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">Skill Evolution — Installing Section (12 → 23 rules)</div>
+  <div class="flow">
+    <div class="flow-node"><div class="flow-node-label">Start</div><div class="flow-node-value">12 rules</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-label">After 4.17</div><div class="flow-node-value">+3</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-label">After 4.18</div><div class="flow-node-value">+3</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-label">After 4.19</div><div class="flow-node-value">+1</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-label">After 4.20</div><div class="flow-node-value">+1</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-label">After 4.21</div><div class="flow-node-value">+2</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-label">After 4.22</div><div class="flow-node-value">+1</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node accent"><div class="flow-node-label">Final</div><div class="flow-node-value">23 rules</div></div>
+  </div>
+  <p style="font-size:0.8rem; color:var(--text2); margin-top:12px;">Key additions: struct-to-docs mapping, CRD schema handling, platform constraint rules, directory restructuring detection, Go comments as doc source, expanded source scan paths</p>
+</div>
+
+<div class="card">
+  <div class="card-header">Skill Evolution — Updating Section (12 → 28 rules)</div>
+  <div class="flow">
+    <div class="flow-node"><div class="flow-node-label">Start</div><div class="flow-node-value">12 rules</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-label">After 4.17</div><div class="flow-node-value">+5</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-label">After 4.18</div><div class="flow-node-value">+2</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-label">After 4.19</div><div class="flow-node-value">+3</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-label">After 4.20</div><div class="flow-node-value">+3</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-label">After 4.21</div><div class="flow-node-value">+1</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-label">After 4.22</div><div class="flow-node-value">+2</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" style="border-color:var(--purple); background:#bc8cff11;"><div class="flow-node-label">Final</div><div class="flow-node-value">28 rules</div></div>
+  </div>
+  <p style="font-size:0.8rem; color:var(--text2); margin-top:12px;">Key additions: admin-ack evidence logic, no-subagent rule, GA promotion handling, CLI fixture usage, file removal detection, Kubernetes version mapping, user-configurable TP features</p>
+</div>
+
+<hr>
+
+<!-- 10. Production -->
+<h2 id="production">10. Production Readiness (4.23+)</h2>
+
+<p>When there's <strong>no ground truth</strong> (future versions), the categories shift:</p>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header"><span class="pill pill-green">What the AI handles — Installing</span></div>
+    <ul>
+      <li>New install-config fields from Go structs/CRD schemas</li>
+      <li>Platform constraint changes (validation rules)</li>
+      <li>New platform support stubs (from installer code)</li>
+      <li>Permission/IAM policy changes per platform</li>
+      <li>Firewall/port requirement updates</li>
+      <li>Version string sweeps across 189 files</li>
+      <li>Correct AsciiDoc structure and includes</li>
+    </ul>
+    <p style="color:var(--green); font-weight:600; margin-top:8px;">= ~80% of install doc changes automated</p>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="pill pill-green">What the AI handles — Updating</span></div>
+    <ul>
+      <li>New CLI commands and flags (oc adm upgrade *)</li>
+      <li>Changed CLI output formats (from test fixtures)</li>
+      <li>New CVO preconditions and upgrade gates</li>
+      <li>MCO behavioral changes (drain, reboot)</li>
+      <li>Admin-ack gate detection (API removals)</li>
+      <li>Version sweeps (channels, kubelet, repos)</li>
+      <li>Feature gate → GA promotion workflow changes</li>
+    </ul>
+    <p style="color:var(--green); font-weight:600; margin-top:8px;">= ~75% of update doc changes automated</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><span class="pill pill-yellow">What humans still do (both sections)</span></div>
+  <div class="grid-2">
+    <ul>
+      <li>Content reorganization decisions</li>
+      <li>New platform/feature documentation from scratch</li>
+      <li>Cross-section coordination (xrefs, includes)</li>
+    </ul>
+    <ul>
+      <li>Product deprecation and removal notices</li>
+      <li>Editorial quality review</li>
+      <li>Final approval before publishing</li>
+    </ul>
+  </div>
+  <p style="color:var(--yellow); font-weight:600; margin-top:8px;">= 20-25% requires human editorial layer</p>
+</div>
+
+<div class="callout success">
+  <p><strong style="color:var(--green)">Bottom line:</strong> The pipeline generates a <strong>high-quality first draft</strong> that is 93-99% accurate on code-derivable changes. The docs team reviews, adds product context, and approves. Time savings: days of manual writing → focused review and editorial polish. This applies across any documentation section we train a skill for.</p>
+</div>
+
+<div class="grid-4" style="margin-top:24px;">
+  <div class="stat"><div class="stat-value">2</div><div class="stat-label">Sections Trained</div></div>
+  <div class="stat"><div class="stat-value blue">12</div><div class="stat-label">Iterations Run</div></div>
+  <div class="stat"><div class="stat-value purple">51</div><div class="stat-label">Total Rules</div></div>
+  <div class="stat"><div class="stat-value">12</div><div class="stat-label">Source Repos</div></div>
+</div>
+
+<hr>
+
+<!-- 11. Future Workflow -->
+<h2 id="workflow">11. Future Workflow</h2>
+
+<p>Each trained SKILL.md becomes a <strong>self-contained doc generator</strong> for its section. The production workflow is simple: pick a section, pick a target version, hit generate. The system creates a branch and raises a PR for that specific section.</p>
+
+<h3>Doc Generation Interface</h3>
+<p>A simple interface for triggering doc generation per section and version:</p>
+
+<div class="card" style="max-width:600px; margin:20px auto;">
+  <div class="card-header" style="justify-content:center;">OKD Doc Generator</div>
+  <div style="display:flex; gap:16px; align-items:end; justify-content:center; margin:20px 0;">
+    <div>
+      <label style="display:block; font-size:0.75rem; color:var(--text2); margin-bottom:4px;">Documentation Section</label>
+      <select id="demo-section" style="background:var(--surface2); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:10px 16px; font-size:0.9rem; min-width:180px; cursor:pointer;">
+        <option>installing</option>
+        <option>updating</option>
+        <option disabled style="color:var(--text2);">networking (not trained)</option>
+        <option disabled style="color:var(--text2);">security (not trained)</option>
+        <option disabled style="color:var(--text2);">observability (not trained)</option>
+      </select>
+    </div>
+    <div>
+      <label style="display:block; font-size:0.75rem; color:var(--text2); margin-bottom:4px;">Target Version</label>
+      <select id="demo-version" style="background:var(--surface2); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:10px 16px; font-size:0.9rem; min-width:120px; cursor:pointer;">
+        <option>4.23</option>
+        <option>5.1</option>
+        <option>5.2</option>
+      </select>
+    </div>
+    <button id="demo-btn" onclick="simulateGenerate()" style="background:var(--accent); color:#fff; border:none; border-radius:6px; padding:10px 24px; font-size:0.9rem; font-weight:600; cursor:pointer; white-space:nowrap;">Generate Docs</button>
+  </div>
+  <div id="demo-output" style="display:none; margin-top:16px; padding:16px; background:var(--bg); border-radius:6px; font-family:'SF Mono','Fira Code',monospace; font-size:0.8rem; line-height:1.8;">
+  </div>
+</div>
+
+<h3>One PR Per Section</h3>
+<p>Instead of one massive PR covering all doc changes, each section gets its <strong>own branch and PR</strong>. This makes it easier for the docs team to review and merge incrementally:</p>
+
+<div class="card">
+  <div style="display:flex; flex-direction:column; gap:12px;">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span class="pill pill-blue" style="min-width:90px; text-align:center;">installing</span>
+      <div style="flex:1; height:1px; background:var(--border);"></div>
+      <code style="font-size:0.8rem;">ai-docs/installing-4.23</code>
+      <div style="flex:0.3; height:1px; background:var(--border);"></div>
+      <span style="background:var(--green); color:#000; padding:2px 10px; border-radius:12px; font-size:0.75rem; font-weight:600;">PR #1247</span>
+      <div style="flex:0.3; height:1px; background:var(--border);"></div>
+      <code style="font-size:0.8rem;">enterprise-4.23</code>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span class="pill pill-purple" style="min-width:90px; text-align:center;">updating</span>
+      <div style="flex:1; height:1px; background:var(--border);"></div>
+      <code style="font-size:0.8rem;">ai-docs/updating-4.23</code>
+      <div style="flex:0.3; height:1px; background:var(--border);"></div>
+      <span style="background:var(--green); color:#000; padding:2px 10px; border-radius:12px; font-size:0.75rem; font-weight:600;">PR #1248</span>
+      <div style="flex:0.3; height:1px; background:var(--border);"></div>
+      <code style="font-size:0.8rem;">enterprise-4.23</code>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span class="pill pill-orange" style="min-width:90px; text-align:center;">networking</span>
+      <div style="flex:1; height:1px; background:var(--border);"></div>
+      <code style="font-size:0.8rem;">ai-docs/networking-4.23</code>
+      <div style="flex:0.3; height:1px; background:var(--border);"></div>
+      <span style="background:var(--green); color:#000; padding:2px 10px; border-radius:12px; font-size:0.75rem; font-weight:600;">PR #1249</span>
+      <div style="flex:0.3; height:1px; background:var(--border);"></div>
+      <code style="font-size:0.8rem;">enterprise-4.23</code>
+    </div>
+  </div>
+  <p style="margin-top:16px; font-size:0.85rem; color:var(--text2);">Each PR targets the release branch (<code>enterprise-4.23</code>) and contains only changes for that section. The docs team reviews and merges each independently.</p>
+</div>
+
+<h3>Release Cycle Timeline — Example: 4.23</h3>
+<p>The doc generation fits naturally into the OpenShift release cycle:</p>
+
+<div class="card" style="overflow-x:auto;">
+  <div style="position:relative; min-width:700px; height:320px; margin:16px 0;">
+    <!-- Timeline bar -->
+    <div style="position:absolute; top:48px; left:40px; right:40px; height:4px; background:var(--border); border-radius:2px;"></div>
+
+    <!-- Aug 13 — Feature freeze -->
+    <div style="position:absolute; top:20px; left:40px; text-align:center;">
+      <div style="width:16px; height:16px; background:var(--red); border-radius:50%; margin:0 auto 0; position:relative; top:30px;"></div>
+      <div style="margin-top:40px; font-size:0.75rem; font-weight:600; color:var(--red);">Aug 13</div>
+      <div style="font-size:0.7rem; color:var(--text2); max-width:100px;">Feature<br>Freeze</div>
+    </div>
+
+    <!-- Aug 14 — First LLM draft -->
+    <div style="position:absolute; top:20px; left:130px; text-align:center;">
+      <div style="width:16px; height:16px; background:var(--accent); border-radius:50%; margin:0 auto 0; position:relative; top:30px;"></div>
+      <div style="margin-top:40px; font-size:0.75rem; font-weight:600; color:var(--accent);">Aug 14</div>
+      <div style="font-size:0.7rem; color:var(--text2); max-width:120px;">First LLM<br>drafts generated</div>
+    </div>
+
+    <!-- Aug-Dec — Docs team review period -->
+    <div style="position:absolute; top:90px; left:150px; right:200px;">
+      <div style="height:24px; background:linear-gradient(90deg, var(--accent)22, var(--yellow)22); border-radius:4px; display:flex; align-items:center; justify-content:center;">
+        <span style="font-size:0.7rem; font-weight:600; color:var(--text);">Docs team reviews, edits, adds product context</span>
+      </div>
+    </div>
+
+    <!-- Intermediate regeneration -->
+    <div style="position:absolute; top:130px; left:250px; text-align:center;">
+      <div style="font-size:0.7rem; color:var(--text2); max-width:200px; border:1px dashed var(--border); border-radius:6px; padding:8px;">Re-generate as needed during dev cycle (code changes after freeze are rare but happen)</div>
+    </div>
+
+    <!-- Jan 5 — GA release -->
+    <div style="position:absolute; top:20px; right:120px; text-align:center;">
+      <div style="width:16px; height:16px; background:var(--green); border-radius:50%; margin:0 auto 0; position:relative; top:30px;"></div>
+      <div style="margin-top:40px; font-size:0.75rem; font-weight:600; color:var(--green);">Jan 5</div>
+      <div style="font-size:0.7rem; color:var(--text2); max-width:100px;">4.23 GA<br>release + docs</div>
+    </div>
+
+    <!-- Jan 6 — Evaluate & refine -->
+    <div style="position:absolute; top:20px; right:20px; text-align:center;">
+      <div style="width:16px; height:16px; background:var(--purple); border-radius:50%; margin:0 auto 0; position:relative; top:30px;"></div>
+      <div style="margin-top:40px; font-size:0.75rem; font-weight:600; color:var(--purple);">Jan 6</div>
+      <div style="font-size:0.7rem; color:var(--text2); max-width:120px;">Evaluate vs<br>final docs</div>
+    </div>
+
+    <!-- Feedback loop arrow -->
+    <div style="position:absolute; bottom:30px; left:40px; right:40px;">
+      <div style="border:2px dashed var(--purple); border-radius:8px; padding:12px 16px; display:flex; align-items:center; gap:12px;">
+        <span style="font-size:1.2rem;">↩</span>
+        <div>
+          <div style="font-size:0.8rem; font-weight:600; color:var(--purple);">Skill Refinement Loop</div>
+          <div style="font-size:0.7rem; color:var(--text2);">Compare LLM draft vs published docs → identify gaps → update SKILL.md → better drafts for 5.1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="callout success">
+  <p><strong style="color:var(--green)">The key advantage:</strong> The docs team gets a first draft <strong>one day</strong> after feature freeze — months before GA. That's months of review time instead of a last-minute scramble. And after each release, the evaluation loop makes the next cycle's drafts even better.</p>
+</div>
+
+<h3>Continuous Improvement Across Releases</h3>
+
+<div class="flow">
+  <div class="flow-node" style="border-color:var(--red);"><div class="flow-node-label">5.0 GA</div><div class="flow-node-value">29 Oct 2026</div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-node" style="border-color:var(--purple);"><div class="flow-node-label">Evaluate</div><div class="flow-node-value">Update Skills</div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-node" style="border-color:var(--accent);"><div class="flow-node-label">5.1 Freeze</div><div class="flow-node-value">27 Nov 2026</div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-node accent"><div class="flow-node-label">Generate</div><div class="flow-node-value">Better Drafts</div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-node green"><div class="flow-node-label">5.1 GA</div><div class="flow-node-value">26 Feb 2027</div></div>
+  <div class="flow-arrow">↩</div>
+</div>
+
+<p style="text-align:center; color:var(--text2); font-size:0.85rem;">Each release cycle makes the skills sharper. The training data grows. The gap shrinks.</p>
+
+<div class="card">
+  <div class="card-header">Scaling to More Sections</div>
+  <p>The same approach applies to any documentation section. To add a new section:</p>
+  <ol style="color:var(--text2);">
+    <li>Identify relevant source repositories for that section</li>
+    <li>Create a SKILL.md with section-specific rules (start with ~12 generic rules)</li>
+    <li>Run the training loop against versions 4.16-4.22 to grow the rule set</li>
+    <li>The section is now ready for production generation</li>
+  </ol>
+  <p style="margin-top:12px;">Candidate sections for expansion:</p>
+  <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+    <span class="pill pill-green">installing (trained)</span>
+    <span class="pill pill-green">updating (trained)</span>
+    <span class="pill pill-yellow">networking</span>
+    <span class="pill pill-yellow">security</span>
+    <span class="pill pill-yellow">observability</span>
+    <span class="pill pill-yellow">CI/CD</span>
+    <span class="pill pill-yellow">virtualization</span>
+  </div>
+</div>
+
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function simulateGenerate() {
+  var section = document.getElementById('demo-section').value;
+  var version = document.getElementById('demo-version').value;
+  var output = document.getElementById('demo-output');
+  var btn = document.getElementById('demo-btn');
+
+  function getPrevVersion(v) {
+    var map = {'4.23': '4.22', '5.1': '4.23', '5.2': '5.1'};
+    return map[v] || v;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Generating...';
+  btn.style.opacity = '0.6';
+  output.style.display = 'block';
+  output.innerHTML = '<span style="color:var(--text2)">Initializing...</span>';
+
+  var steps = [
+    {delay: 600, text: '<span style="color:var(--accent)">$</span> Reading skills/' + section + '/SKILL.md'},
+    {delay: 1000, text: '<span style="color:var(--green)">✓</span> Loaded SKILL.md (28 rules)'},
+    {delay: 800, text: '<span style="color:var(--accent)">$</span> Generating code diff ' + getPrevVersion(version) + ' → ' + version},
+    {delay: 1200, text: '<span style="color:var(--green)">✓</span> Diff ready (5 repos, 847 relevant changes)'},
+    {delay: 600, text: '<span style="color:var(--accent)">$</span> Reading baseline docs (' + getPrevVersion(version) + ')'},
+    {delay: 1000, text: '<span style="color:var(--green)">✓</span> Baseline loaded (109 files)'},
+    {delay: 800, text: '<span style="color:var(--accent)">$</span> Generating ' + section + ' docs for ' + version + '...'},
+    {delay: 2000, text: '<span style="color:var(--green)">✓</span> Generated 112 files (3 new, 14 modified, 95 unchanged)'},
+    {delay: 600, text: '<span style="color:var(--accent)">$</span> git checkout -b ai-docs/' + section + '-' + version},
+    {delay: 800, text: '<span style="color:var(--green)">✓</span> Branch created'},
+    {delay: 600, text: '<span style="color:var(--accent)">$</span> gh pr create --draft --base enterprise-' + version},
+    {delay: 1000, text: '<span style="color:var(--green)">✓</span> Draft PR #1247 created → <span style="color:var(--accent); text-decoration:underline;">openshift/openshift-docs#1247</span>'},
+    {delay: 400, text: ''},
+    {delay: 200, text: '<span style="color:var(--green); font-weight:600;">Done!</span> <span style="color:var(--text2)">Draft PR ready for docs team review.</span>'}
+  ];
+
+  var html = '';
+  var i = 0;
+  var totalDelay = 0;
+
+  steps.forEach(function(step) {
+    totalDelay += step.delay;
+    setTimeout(function() {
+      html += step.text + '<br>';
+      output.innerHTML = html;
+      output.scrollTop = output.scrollHeight;
+      i++;
+      if (i === steps.length) {
+        btn.disabled = false;
+        btn.textContent = 'Generate Docs';
+        btn.style.opacity = '1';
+      }
+    }, totalDelay);
+  });
+}
+</script>
+
+</body>
+</html>

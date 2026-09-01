@@ -1,0 +1,9 @@
+// Module included in the following assemblies:
+//
+// * updating/preparing_for_updates/updating-cluster-prepare.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="update-preparing-list_{context}"]
+= Removed Kubernetes APIs
+
+{product-title} 4.20 uses Kubernetes 1.33, which does not remove any additional deprecated Kubernetes APIs beyond those already removed in prior releases. No administrator action is required for API compatibility when updating from {product-title} 4.19 to 4.20.

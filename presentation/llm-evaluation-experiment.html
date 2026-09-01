@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OKD Docs AI Generation — LLM Evaluation Experiment Results</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2128;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --accent: #58a6ff;
+  --green: #3fb950;
+  --yellow: #d29922;
+  --red: #f85149;
+  --purple: #bc8cff;
+  --orange: #f0883e;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 40px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+h1 { font-size: 2.2rem; margin-bottom: 8px; font-weight: 700; }
+h2 { font-size: 1.5rem; margin: 48px 0 16px; font-weight: 600; color: var(--accent); }
+h3 { font-size: 1.1rem; margin: 20px 0 8px; font-weight: 600; }
+h4 { font-size: 0.95rem; margin: 12px 0 6px; color: var(--text2); font-weight: 600; }
+p { color: var(--text2); margin-bottom: 12px; }
+ul, ol { color: var(--text2); padding-left: 24px; margin-bottom: 12px; }
+li { margin: 6px 0; }
+code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: var(--accent);
+}
+.subtitle { color: var(--text2); font-size: 1.1rem; margin-bottom: 32px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.card-header {
+  font-weight: 600; font-size: 1rem; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px; color: var(--text);
+}
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+.grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+@media (max-width: 768px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+.pill { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 500; }
+.pill-red { background: #f8514922; color: var(--red); }
+.pill-yellow { background: #d2992222; color: var(--yellow); }
+.pill-blue { background: #58a6ff22; color: var(--accent); }
+.pill-green { background: #3fb95022; color: var(--green); }
+.pill-purple { background: #bc8cff22; color: var(--purple); }
+.pill-orange { background: #f0883e22; color: var(--orange); }
+.stat {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 20px; text-align: center;
+}
+.stat-value { font-size: 2rem; font-weight: 700; color: var(--green); }
+.stat-value.blue { color: var(--accent); }
+.stat-value.yellow { color: var(--yellow); }
+.stat-value.purple { color: var(--purple); }
+.stat-value.red { color: var(--red); }
+.stat-value.orange { color: var(--orange); }
+.stat-label { font-size: 0.85rem; color: var(--text2); margin-top: 4px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin: 16px 0; }
+th { text-align: left; padding: 12px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); color: var(--text2); font-weight: 600; }
+td { padding: 10px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
+tr:nth-child(even) td { background: var(--surface2); }
+tr.highlight td { background: #3fb95015; }
+.callout { border-left: 3px solid var(--accent); background: var(--surface); padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+.callout.warning { border-left-color: var(--yellow); }
+.callout.success { border-left-color: var(--green); }
+.callout.danger { border-left-color: var(--red); }
+.callout p { margin-bottom: 0; }
+hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+.formula { text-align: center; padding: 24px; margin: 16px 0; }
+.formula-main { font-size: 1.6rem; font-weight: 700; font-family: 'SF Mono', 'Fira Code', monospace; color: var(--text); }
+.formula-main .var { color: var(--accent); }
+.formula-main .op { color: var(--text2); }
+.metric-formula { display: block; background: var(--surface2); padding: 10px 16px; border-radius: 6px; font-family: 'SF Mono', monospace; font-size: 0.9rem; color: var(--green); margin: 8px 0; }
+.flow { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px 0; }
+.flow-node { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; text-align: center; min-width: 100px; }
+.flow-node.accent { border-color: var(--accent); }
+.flow-node.green { border-color: var(--green); }
+.flow-node.yellow { border-color: var(--yellow); }
+.flow-node.purple { border-color: var(--purple); }
+.flow-node.red { border-color: var(--red); }
+.flow-node-label { font-size: 0.7rem; color: var(--text2); }
+.flow-node-value { font-weight: 600; font-size: 0.85rem; }
+.flow-arrow { color: var(--text2); font-size: 1.2rem; }
+.progress-bar { background: var(--surface2); border-radius: 4px; height: 24px; overflow: hidden; margin: 8px 0; }
+.progress-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: 0.75rem; font-weight: 600; }
+.toc { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin-bottom: 32px; }
+.toc ol { counter-reset: toc; list-style: none; padding-left: 0; }
+.toc li { counter-increment: toc; margin: 8px 0; }
+.toc li::before { content: counter(toc) "."; color: var(--accent); font-weight: 600; margin-right: 8px; }
+.toc a { color: var(--text); text-decoration: none; }
+.toc a:hover { color: var(--accent); }
+.versus { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center; margin: 20px 0; }
+.versus-label { text-align: center; color: var(--text2); font-weight: 600; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+
+<h1>LLM-Based Evaluation Experiment</h1>
+<p class="subtitle">Measuring AI doc generation quality with semantic judges — not just string matching</p>
+
+<div class="toc">
+  <strong style="color:var(--text)">Contents</strong>
+  <ol>
+    <li><a href="#problem">The Problem with difflib</a></li>
+    <li><a href="#approach">Our Approach: 3-Way LLM Evaluation</a></li>
+    <li><a href="#changes">What We Changed Between Runs</a></li>
+    <li><a href="#results">Results: Three Runs Compared</a></li>
+    <li><a href="#deep-dive">Deep Dive: What Failed and Why</a></li>
+    <li><a href="#beats-human">Where AI Beats Human Docs</a></li>
+    <li><a href="#gap">The Remaining 9% Gap</a></li>
+    <li><a href="#skill-evolution">SKILL.md Evolution</a></li>
+    <li><a href="#conclusions">Conclusions</a></li>
+  </ol>
+</div>
+
+<hr>
+
+<!-- 1. Problem -->
+<h2 id="problem">1. The Problem with difflib</h2>
+
+<div class="card">
+  <div class="card-header">Our previous evaluation used <code>difflib.SequenceMatcher</code></div>
+  <p>It compares text line-by-line and reports a similarity ratio. For our first 6 iterations, it showed:</p>
+  <div class="grid-3">
+    <div class="stat"><div class="stat-value">~95%</div><div class="stat-label">Text Similarity</div></div>
+    <div class="stat"><div class="stat-value blue">~95%</div><div class="stat-label">Section Coverage</div></div>
+    <div class="stat"><div class="stat-value purple">~95%</div><div class="stat-label">Parameter Coverage</div></div>
+  </div>
+  <p>This looked great. But it was <strong style="color:var(--text)">misleading</strong>.</p>
+</div>
+
+<div class="callout danger">
+  <p><strong style="color:var(--red)">The hidden truth:</strong> When we ran an LLM-based evaluation that actually READ the code diff and checked whether each change was documented, <strong style="color:var(--text)">completeness was only 46.4%</strong> — the skill was missing HALF the changes while still scoring 95% on text similarity.</p>
+</div>
+
+<div class="card">
+  <div class="card-header">Why difflib is insufficient for doc evaluation</div>
+  <table>
+    <tr><th>Scenario</th><th>difflib Score</th><th>Actual Quality</th></tr>
+    <tr><td>880 files copied from 4.16, only 5 updated</td><td>~95% (880 identical files average it up)</td><td>Bad — 15+ changes were missed</td></tr>
+    <tr><td>Correct content, different wording</td><td>~70% (words don't match)</td><td>Good — semantically correct</td></tr>
+    <tr><td>One wrong default value in a param table</td><td>~99% (one line differs)</td><td>Bad — users will misconfigure</td></tr>
+  </table>
+</div>
+
+<hr>
+
+<!-- 2. Approach -->
+<h2 id="approach">2. Our Approach: 3-Way LLM Evaluation</h2>
+
+<div class="formula">
+  <div class="formula-main">
+    <span class="var">Baseline 4.16</span> <span class="op">→</span> <span class="var">Generated 4.17</span> <span class="op">vs</span> <span class="var">Ground Truth 4.17</span>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">The LLM judge sees ALL THREE versions</div>
+  <p>For every file, the judge determines:</p>
+  <table>
+    <tr><th>Classification</th><th>Meaning</th><th>Who's at fault?</th></tr>
+    <tr><td><span class="pill pill-green">UNCHANGED_CORRECT</span></td><td>Same in all three (baseline = generated = ground truth)</td><td>Nobody — file didn't need changing</td></tr>
+    <tr><td><span class="pill pill-blue">CORRECT</span></td><td>Generated matches ground truth semantically</td><td>Nobody — agent did it right</td></tr>
+    <tr><td><span class="pill pill-yellow">MINOR_ISSUES</span></td><td>Small inaccuracies (wrong optional/required, imprecise wording)</td><td>Agent — minor fault</td></tr>
+    <tr><td><span class="pill pill-red">MAJOR_ISSUES</span></td><td>Wrong types, wrong defaults, fabricated content, missing critical info</td><td>Agent — serious fault</td></tr>
+  </table>
+</div>
+
+<h3>Four evaluation dimensions</h3>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header">Semantic Accuracy</div>
+    <p>LLM reads every common file. Classifies each as correct/minor/major. Files wrong in <em>both</em> 4.16 and generated are NOT penalized.</p>
+  </div>
+  <div class="card">
+    <div class="card-header">Completeness</div>
+    <p>LLM reads the full code diff. For each user-facing change, checks if it appears in generated output. Scored as COVERED or MISSED.</p>
+  </div>
+  <div class="card">
+    <div class="card-header">Structure Compliance</div>
+    <p>Checks AsciiDoc conventions: module headers, IDs, procedure format, attribute usage. Separates inherited-from-4.16 issues from agent-introduced ones.</p>
+  </div>
+  <div class="card">
+    <div class="card-header">Parameter Accuracy (Grounded)</div>
+    <p>For every new/changed parameter, reads the actual Go source code and verifies: name matches json tag, description matches comment, type correct, constraints correct.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- 3. Changes -->
+<h2 id="changes">3. What We Changed Between Runs</h2>
+
+<h3>Run 1 → Run 2: Enhanced Code Diffs + Source Access</h3>
+
+<div class="card">
+  <div class="card-header">Problem: The skill couldn't see the parameters it needed to document</div>
+  <p>Original diff was ~100KB, heavily filtered. Enhanced diff is ~460KB with full Go type files.</p>
+</div>
+
+<div class="versus">
+  <div class="card" style="margin:0">
+    <div class="card-header">Before: Filtered Diff</div>
+    <div style="background: var(--bg); padding: 12px; border-radius: 6px; font-family: monospace; font-size: 0.8rem; color: var(--red);">
+      @@ -48,5 +48,4 @@<br>
+      +IAMProfile string `json:"iamProfile,omitempty"`<br>
+      <span style="color:var(--text2)">// ...that's all the LLM sees</span>
+    </div>
+    <p style="margin-top:8px">2-line context. No Go comment. No validation. No mutual exclusion info.</p>
+  </div>
+  <div class="versus-label">→</div>
+  <div class="card" style="margin:0">
+    <div class="card-header">After: Full File Content</div>
+    <div style="background: var(--bg); padding: 12px; border-radius: 6px; font-family: monospace; font-size: 0.8rem; color: var(--green);">
+      // IAMProfile is the name of the IAM instance<br>
+      // profile to use for the machine. Leave unset<br>
+      // to have the installer create the IAM Profile.<br>
+      // Cannot be specified together with iamRole.<br>
+      // +optional<br>
+      IAMProfile string `json:"iamProfile,omitempty"`
+    </div>
+    <p style="margin-top:8px">Full context: description, constraints, type, optional status.</p>
+  </div>
+</div>
+
+<h3>Run 2 → Run 3: 9 New Rules from LLM Eval Feedback</h3>
+
+<div class="card">
+  <div class="card-header">The LLM eval identified specific failure patterns → new SKILL.md rules</div>
+  <table>
+    <tr><th>#</th><th>New Rule</th><th>Triggered By</th></tr>
+    <tr><td>15</td><td>Field <em>comment</em> changes need doc updates (not just new tags)</td><td>GCP serviceAccount scope widened</td></tr>
+    <tr><td>16</td><td>CNI/platform removals must sweep ALL modules</td><td>OpenShift SDN leftover in MTU, firewall</td></tr>
+    <tr><td>17</td><td>Version-string sweep (RHCOS URLs, kubelet versions)</td><td>169 stale version-string files</td></tr>
+    <tr><td>18</td><td>Permission/validation diffs are user docs</td><td>Azure NAT rules missed</td></tr>
+    <tr><td>19</td><td>GA feature gate → delete ALL Tech Preview artifacts</td><td>GCP labels missing Passthrough</td></tr>
+    <tr><td>20</td><td>Re-read procedures when subsystem changes</td><td>vSphere topology, IBM Z paths</td></tr>
+    <tr><td>21</td><td>Document automatic CLI behaviors (no new flag)</td><td>gather-on-failure missed</td></tr>
+    <tr><td>22</td><td>Default CIDR/MTU changes for new installs</td><td>masquerade CIDRs missed</td></tr>
+    <tr><td>23</td><td>Expand source scan to validation.go, permissions.go</td><td>Permission diffs missed</td></tr>
+  </table>
+</div>
+
+<hr>
+
+<!-- 4. Results -->
+<h2 id="results">4. Results: Three Runs Compared</h2>
+
+<div class="grid-4">
+  <div class="stat"><div class="stat-value">91%</div><div class="stat-label">Final Overall Score</div></div>
+  <div class="stat"><div class="stat-value blue">+26</div><div class="stat-label">Points gained (vs Run 1)</div></div>
+  <div class="stat"><div class="stat-value purple">+34</div><div class="stat-label">Completeness gain</div></div>
+  <div class="stat"><div class="stat-value orange">3</div><div class="stat-label">Iterative runs needed</div></div>
+</div>
+
+<table>
+  <tr><th>Metric</th><th>Run 1<br><span style="font-weight:normal;color:var(--text2)">Old skill + old diff</span></th><th>Run 2<br><span style="font-weight:normal;color:var(--text2)">Updated skill + enhanced diff</span></th><th>Run 3<br><span style="font-weight:normal;color:var(--text2)">Final skill + enhanced diff</span></th></tr>
+  <tr><td>Semantic Accuracy</td><td>93.2%</td><td>83.7%</td><td style="color:var(--green);font-weight:600">92.7%</td></tr>
+  <tr><td>Completeness</td><td style="color:var(--red)">46.4%</td><td>71.0%</td><td style="color:var(--green);font-weight:600">80.8%</td></tr>
+  <tr><td>Structure (agent)</td><td>99.9%</td><td>97.2%</td><td style="color:var(--green);font-weight:600">99.8%</td></tr>
+  <tr><td>Parameter Accuracy</td><td>82.3%</td><td>97.0%</td><td style="color:var(--green);font-weight:600">94.7%</td></tr>
+  <tr class="highlight"><td><strong>Overall</strong></td><td><strong>64.8%</strong></td><td><strong>79.0%</strong></td><td style="color:var(--green);font-weight:700"><strong>91.0%</strong></td></tr>
+</table>
+
+<h3>Visual: Score Progression</h3>
+<div class="card">
+  <h4>Completeness (the biggest improvement)</h4>
+  <div style="margin: 12px 0;">
+    <div style="display:flex;align-items:center;gap:12px;margin:8px 0">
+      <span style="width:50px;color:var(--text2);font-size:0.85rem">Run 1</span>
+      <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:46.4%;background:var(--red)">46.4%</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;margin:8px 0">
+      <span style="width:50px;color:var(--text2);font-size:0.85rem">Run 2</span>
+      <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:71%;background:var(--yellow)">71%</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;margin:8px 0">
+      <span style="width:50px;color:var(--text2);font-size:0.85rem">Run 3</span>
+      <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:80.8%;background:var(--green)">80.8%</div></div>
+    </div>
+  </div>
+
+  <h4 style="margin-top:20px">Parameter Accuracy</h4>
+  <div style="margin: 12px 0;">
+    <div style="display:flex;align-items:center;gap:12px;margin:8px 0">
+      <span style="width:50px;color:var(--text2);font-size:0.85rem">Run 1</span>
+      <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:82.3%;background:var(--yellow)">82.3%</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;margin:8px 0">
+      <span style="width:50px;color:var(--text2);font-size:0.85rem">Run 2</span>
+      <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:97%;background:var(--green)">97%</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;margin:8px 0">
+      <span style="width:50px;color:var(--text2);font-size:0.85rem">Run 3</span>
+      <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:94.7%;background:var(--green)">94.7%</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="callout success">
+  <p><strong style="color:var(--green)">Key insight:</strong> Run 2 had the best parameter accuracy (97%) but worst semantic accuracy (83.7%) — it tried to do too much and broke things. Run 3 found the balance: high accuracy AND high completeness.</p>
+</div>
+
+<hr>
+
+<!-- 5. Deep Dive -->
+<h2 id="deep-dive">5. Deep Dive: What Failed and Why</h2>
+
+<h3>Run 1 Failures (Completeness = 46.4%)</h3>
+<div class="card">
+  <div class="card-header">The skill simply couldn't see the parameters</div>
+  <table>
+    <tr><th>Missed Change</th><th>Root Cause</th></tr>
+    <tr><td><code>iamProfile</code> (new AWS field)</td><td>Go comment was outside the 2-line diff context window</td></tr>
+    <tr><td><code>bestEffortDeleteIgnition</code></td><td>Deprecation comment not in filtered diff</td></tr>
+    <tr><td>PowerVS <code>tgName</code></td><td>Field existed in full file but was filtered out</td></tr>
+    <tr><td>Nutanix nested schemas</td><td>Struct body tracking didn't exist in original filter</td></tr>
+    <tr><td>Image-based full field set</td><td>Only function signatures kept; struct fields cut</td></tr>
+  </table>
+  <p style="margin-top:12px"><strong style="color:var(--text)">Fix:</strong> Enhanced diffs with full <code>platform.go</code> files → all fields visible with comments and tags.</p>
+</div>
+
+<h3>Run 2 Failures (Semantic = 83.7%)</h3>
+<div class="card">
+  <div class="card-header">The skill tried to do more but introduced errors</div>
+  <table>
+    <tr><th>Error Type</th><th>Example</th><th>Count</th></tr>
+    <tr><td>Leftover removed content</td><td>OpenShift SDN still in MTU/firewall modules</td><td>3 MAJOR</td></tr>
+    <tr><td>Incomplete GA transition</td><td>GCP labels: removed TP but forgot <code>credentialsMode</code></td><td>2 MAJOR</td></tr>
+    <tr><td>Stale version strings</td><td>RHCOS 4.16 URLs in 169 files</td><td>169 MINOR</td></tr>
+    <tr><td>Missing procedure rewrites</td><td>vSphere still single-vCenter text</td><td>3 MAJOR</td></tr>
+  </table>
+  <p style="margin-top:12px"><strong style="color:var(--text)">Fix:</strong> Added rules 15-23 (sweep removals, version strings, GA cleanup, procedure re-reads).</p>
+</div>
+
+<h3>Run 3 Remaining Issues (Overall = 91%)</h3>
+<div class="card">
+  <div class="card-header">Only 3 MAJOR issues remain</div>
+  <table>
+    <tr><th>Issue</th><th>Category</th><th>Fixable by Code Diff?</th></tr>
+    <tr><td>AWS tag spaces (validation-only, no new field)</td><td>Constraint change</td><td>Yes — grep validation commits</td></tr>
+    <tr><td>vSphere multi-vCenter (MaxItems changed)</td><td>Constraint change</td><td>Yes — kubebuilder annotation</td></tr>
+    <tr><td>BMO HostFirmwareComponents</td><td>External repo feature</td><td>Partially — deeper BMO scanning</td></tr>
+  </table>
+</div>
+
+<hr>
+
+<!-- 6. Beats Human -->
+<h2 id="beats-human">6. Where AI Beats Human Docs</h2>
+
+<div class="callout success">
+  <p><strong style="color:var(--green)">The evaluator explicitly noted:</strong> Generated docs are MORE accurate than the human-written 4.17 ground truth in several areas.</p>
+</div>
+
+<div class="card">
+  <div class="card-header">Fields documented correctly by AI but missed by human docs team</div>
+  <table>
+    <tr><th>Field/Feature</th><th>AI Generated</th><th>Human Ground Truth</th></tr>
+    <tr><td><code>baselineCapabilitySet: v4.17</code></td><td style="color:var(--green)">✓ Documented with correct enum</td><td style="color:var(--red)">✗ Never added</td></tr>
+    <tr><td>PowerVS <code>tgName</code></td><td style="color:var(--green)">✓ Full description from Go comment</td><td style="color:var(--red)">✗ Omitted</td></tr>
+    <tr><td>OpenStack <code>controlPlanePort</code> deprecating <code>machinesSubnet</code></td><td style="color:var(--green)">✓ Deprecated + replacement</td><td style="color:var(--red)">✗ Not marked deprecated</td></tr>
+    <tr><td>Image-based installer in installing/</td><td style="color:var(--green)">✓ Complete assembly + 6 modules</td><td style="color:var(--yellow)">~ Placed elsewhere in docs tree</td></tr>
+    <tr><td>GCP hyperdisk-balanced + AI zone filtering</td><td style="color:var(--green)">✓ Both documented</td><td style="color:var(--yellow)">~ Incomplete</td></tr>
+    <tr><td>AWS <code>amiID</code> platform deprecation</td><td style="color:var(--green)">✓ Marked deprecated with replacement</td><td style="color:var(--red)">✗ Still documented as current</td></tr>
+  </table>
+</div>
+
+<p><strong style="color:var(--text)">Why this happens:</strong> Our approach uses Go source as ground truth. If the struct says <code>// deprecated. Use X instead.</code> — we document it. Human docs teams sometimes miss these because they rely on Jira tickets and release notes, not direct code inspection.</p>
+
+<hr>
+
+<!-- 7. Gap -->
+<h2 id="gap">7. The Remaining 9% Gap</h2>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header">Fixable (~4%)</div>
+    <ul>
+      <li>Validation-only constraint changes (no new field name)</li>
+      <li>Assembly ID format (<code>_{context}</code>)</li>
+      <li>Sample device paths matching Go comments</li>
+      <li>Deeper BMO diff scanning</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-header">Not fixable by code diff (~5%)</div>
+    <ul>
+      <li>Directory reorganizations (Azure IPI/UPI split)</li>
+      <li>Module renames (IBM Cloud classic)</li>
+      <li>Content merges/splits (editorial decisions)</li>
+      <li>Features from unmonitored repos</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">The "Unpredictable 5%" — Editorial Decisions</div>
+  <p>These changes exist in ground truth but have NO signal in any code repository:</p>
+  <ul>
+    <li>Moving Azure docs from <code>installing_azure/</code> to <code>installing_azure/ipi/</code> + <code>installing_azure/upi/</code></li>
+    <li>Renaming <code>installing_ibm_cloud_public/</code> to <code>installing_ibm_cloud_classic/</code></li>
+    <li>Removing <code>disconnected_install/</code> from the installing book entirely</li>
+    <li>Splitting one large module into multiple focused modules</li>
+  </ul>
+  <p>These require either docs-team planning documents, topic-map diffs, or human editorial review.</p>
+</div>
+
+<hr>
+
+<!-- 8. Skill Evolution -->
+<h2 id="skill-evolution">8. SKILL.md Evolution</h2>
+
+<table>
+  <tr><th>Version</th><th>Lines</th><th>Rules</th><th>Key Addition</th></tr>
+  <tr><td>Initial (scratch/)</td><td>347</td><td>7</td><td>5 phases, format conventions, OKD rules</td></tr>
+  <tr><td>After 6 difflib iterations</td><td>516</td><td>14</td><td>Appendix with patterns from 4.17-4.22; rules 8-14</td></tr>
+  <tr><td>+ Enhanced diffs + source access</td><td>576</td><td>14</td><td>Source repo lookup, enhanced diff format guide, rule 6</td></tr>
+  <tr><td>+ LLM eval lessons (final)</td><td>614</td><td>23</td><td>Rules 15-23: sweep, version strings, permissions, GA gates</td></tr>
+</table>
+
+<div class="card">
+  <div class="card-header">The skill grew from generic instructions → battle-tested ruleset</div>
+  <div class="flow">
+    <div class="flow-node accent"><div class="flow-node-label">Phase 1</div><div class="flow-node-value">Generic writer skill</div></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node yellow"><div class="flow-node-label">Phase 2</div><div class="flow-node-value">+Pattern recognition</div></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node green"><div class="flow-node-label">Phase 3</div><div class="flow-node-value">+Full code visibility</div></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node purple"><div class="flow-node-label">Phase 4</div><div class="flow-node-value">+LLM eval feedback</div></div>
+  </div>
+  <p style="text-align:center;margin-top:12px">Each phase was triggered by a <em>different evaluation methodology</em> revealing gaps the previous one couldn't see.</p>
+</div>
+
+<hr>
+
+<!-- 9. Conclusions -->
+<h2 id="conclusions">9. Conclusions</h2>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header" style="color:var(--green)">What Works</div>
+    <ol>
+      <li><strong>Enhanced diffs are the biggest lever.</strong> Full Go files → +34% completeness.</li>
+      <li><strong>LLM eval finds what difflib can't.</strong> String matching said 95%, reality was 46% complete.</li>
+      <li><strong>Iterative refinement works.</strong> Each eval → specific rules → measurable improvement.</li>
+      <li><strong>Code-first beats human-first.</strong> AI catches fields humans miss because it reads the struct directly.</li>
+      <li><strong>3-way eval is fair.</strong> Inherited issues don't penalize; only agent-caused errors count.</li>
+    </ol>
+  </div>
+  <div class="card">
+    <div class="card-header" style="color:var(--yellow)">Limitations</div>
+    <ol>
+      <li><strong>~5% ceiling from editorial decisions.</strong> Not solvable by code diffs alone.</li>
+      <li><strong>Each LLM eval costs ~$5-10.</strong> Can't run on every commit.</li>
+      <li><strong>Non-deterministic.</strong> Same eval run twice may score ±2%.</li>
+      <li><strong>Unmonitored repos.</strong> BMO, CNO features come from repos we don't fully scan.</li>
+      <li><strong>Procedures need rewriting, not just param rows.</strong> Hardest to get right automatically.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="callout">
+  <p><strong style="color:var(--accent)">Bottom line:</strong> With enhanced code diffs + iteratively-refined SKILL.md + LLM evaluation, we achieve <strong style="color:var(--green)">91% overall quality</strong> on a code-diff-only approach. The remaining 9% requires human editorial input or additional signal sources.</p>
+</div>
+
+<h3>Recommended Evaluation Strategy Going Forward</h3>
+
+<div class="flow">
+  <div class="flow-node accent"><div class="flow-node-label">Fast</div><div class="flow-node-value">difflib (seconds)</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node yellow"><div class="flow-node-label">Gate</div><div class="flow-node-value">&lt;90%? Stop</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node green"><div class="flow-node-label">Deep</div><div class="flow-node-value">LLM eval (minutes)</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node purple"><div class="flow-node-label">Final</div><div class="flow-node-value">Human review</div></div>
+</div>
+
+<div class="card" style="margin-top:20px">
+  <div class="card-header">Use difflib for fast iteration, LLM eval for final quality gate</div>
+  <table>
+    <tr><th>Stage</th><th>Tool</th><th>Cost</th><th>When</th></tr>
+    <tr><td>Development iteration</td><td><code>evaluate-generated-docs.py</code> (difflib)</td><td>Free, 2 seconds</td><td>Every generation run</td></tr>
+    <tr><td>Quality gate</td><td>LLM eval (semantic + grounded)</td><td>~$5-10 per version</td><td>Before publishing</td></tr>
+    <tr><td>Production</td><td>eval harness + human review</td><td>~$10 + human time</td><td>Release cycle</td></tr>
+  </table>
+</div>
+
+</body>
+</html>
