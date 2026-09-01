@@ -233,6 +233,37 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   <tr><td><span class="pill pill-purple">Updating</span></td><td><code>skills/generate-updating-docs/SKILL.md</code></td><td>28 rules</td><td>5 repos</td></tr>
 </table>
 
+<h3>Source Repositories Per Section</h3>
+<p>Each section monitors a specific set of OpenShift source repositories. Different sections need different repos because the code that affects installation docs is different from the code that affects update docs.</p>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header"><span class="pill pill-blue">Installing</span> — 7 repos</div>
+    <table style="font-size:0.85rem;">
+      <tr><th>Repository</th><th>Contributes</th></tr>
+      <tr><td><code>openshift/installer</code></td><td>Install-config Go structs, platform types, CLI commands, CRD schema, UPI templates</td></tr>
+      <tr><td><code>openshift/api</code></td><td>ClusterVersion types, feature gates, machine API types, network types</td></tr>
+      <tr><td><code>openshift/baremetal-operator</code></td><td>Bare metal provisioning APIs, BMH types</td></tr>
+      <tr><td><code>openshift/assisted-installer</code></td><td>Assisted installer workflows, agent-based installation</td></tr>
+      <tr><td><code>openshift/cluster-network-operator</code></td><td>Network plugin config, SDN/OVN settings</td></tr>
+      <tr><td><code>openshift/machine-config-operator</code></td><td>Node configuration, MachineConfig types</td></tr>
+      <tr><td><code>openshift/machine-api-operator</code></td><td>Machine API types, provider-specific machine specs</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="pill pill-purple">Updating</span> — 5 repos</div>
+    <table style="font-size:0.85rem;">
+      <tr><th>Repository</th><th>Contributes</th></tr>
+      <tr><td><code>openshift/cluster-version-operator</code></td><td>Update orchestration, preconditions, upgrade gates</td></tr>
+      <tr><td><code>openshift/oc</code></td><td>CLI: oc adm upgrade (recommend, status, channel, rollback)</td></tr>
+      <tr><td><code>openshift/machine-config-operator</code></td><td>Node update behavior: drain, reboot, MCP coordination</td></tr>
+      <tr><td><code>openshift/api</code></td><td>ClusterVersion API types, conditions, K8s version</td></tr>
+      <tr><td><code>openshift/cluster-network-operator</code></td><td>SDN/OVN migration gates, CNI update blockers</td></tr>
+    </table>
+    <p style="font-size:0.8rem; color:var(--text2); margin-top:12px;">3 repos (api, machine-config-operator, cluster-network-operator) are shared with Installing. As more sections are trained, additional repos will be identified through the same iterative process.</p>
+  </div>
+</div>
+
 <hr>
 
 <!-- 4. Training Loop -->
@@ -704,7 +735,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   <div class="stat"><div class="stat-value">2</div><div class="stat-label">Sections Trained</div></div>
   <div class="stat"><div class="stat-value blue">12</div><div class="stat-label">Iterations Run</div></div>
   <div class="stat"><div class="stat-value purple">51</div><div class="stat-label">Total Rules</div></div>
-  <div class="stat"><div class="stat-value">12</div><div class="stat-label">Source Repos</div></div>
+  <div class="stat"><div class="stat-value">9</div><div class="stat-label">Unique Source Repos</div></div>
 </div>
 
 <hr>
