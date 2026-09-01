@@ -1,0 +1,22 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="installing-gcp-multiarch-support"]
+= Installing a cluster on GCP with multi-architecture support
+include::_attributes/common-attributes.adoc[]
+:context: installing-gcp-multiarch-support
+
+toc::[]
+
+// TODO: Stub assembly generated from code diffs. The MultiArchInstall feature
+// gate was promoted to GA in {product-version}. Full documentation content
+// should be verified by a subject matter expert.
+
+In {product-title} {product-version}, you can install a cluster on {gcp-first} that supports multi-architecture compute nodes. A multi-architecture cluster enables you to run workloads on nodes of different architectures within the same cluster.
+
+The multi-architecture installation feature allows clusters to include both `amd64` and `arm64` compute nodes on {gcp-short}. Control plane nodes must use a single architecture, while compute nodes can use a different architecture.
+
+[NOTE]
+====
+Multi-architecture support for {gcp-short} clusters is generally available starting with {product-title} {product-version}.
+====
+
+include::modules/installation-gcp-tested-machine-types-arm.adoc[leveloffset=+1]

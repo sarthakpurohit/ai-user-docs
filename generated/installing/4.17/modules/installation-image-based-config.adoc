@@ -1,0 +1,45 @@
+// Module included in the following assemblies:
+//
+// * installing/installing_image_based_install/installing-image-based.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="installation-image-based-config_{context}"]
+= Image-based installation configuration reference
+
+// TODO: Stub module generated from code diffs. Content should be verified
+// by a subject matter expert.
+
+The `ImageBasedInstallationConfig` resource defines the parameters for an image-based installation. The following fields are available:
+
+[cols="1,3a",options="header"]
+|===
+|Parameter|Description
+
+|`seedImage`
+|The URI of the OCI seed image to use for the installation. This is a required field.
+
+|`seedVersion`
+|The {product-title} version of the seed image. This is a required field.
+
+|`installationDisk`
+|The target disk device path for writing the image (for example, `/dev/sda`). This is a required field.
+
+|`pullSecret`
+|The pull secret required for accessing container registries. This is a required field.
+
+|`proxy`
+|Optional. Proxy configuration for the cluster, including `httpProxy`, `httpsProxy`, and `noProxy` fields.
+
+|`imageDigestSources`
+|Optional. A list of image digest mirror sources for disconnected installations.
+
+|`networkConfig`
+|Optional. NMState-based network configuration for the host interfaces.
+|===
+
+You can generate a template `ImageBasedInstallationConfig` by running:
+
+[source,terminal]
+----
+$ openshift-install image-based create config-template
+----

@@ -1,0 +1,26 @@
+// Module included in the following assemblies:
+//
+// * installing/installing_image_based_install/installing-image-based.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="installation-image-based-about_{context}"]
+= About image-based installation
+
+// TODO: Stub module generated from code diffs. Content should be verified
+// by a subject matter expert.
+
+Image-based installation is a method for deploying single-node {product-title} clusters using a seed image captured from a pre-configured cluster. This method enables rapid and reproducible cluster deployments.
+
+The image-based installation process uses the following key concepts:
+
+Seed image:: A pre-generated OCI image that captures the operating system and {product-title} platform state of a seed cluster. The seed image is specified in the `ImageBasedInstallationConfig` resource.
+
+Seed reconfiguration:: The process of applying site-specific configuration (such as hostname, networking, and pull secret) to a seed image to produce a bootable installation artifact.
+
+Installation disk:: The target disk on which the seed image is written and from which the new cluster boots.
+
+.Prerequisites
+
+* A seed image generated from a {product-title} seed cluster.
+* A valid pull secret for accessing the required container registries.
+* An `ImageBasedInstallationConfig` manifest specifying the seed image, installation disk, and site-specific configuration.

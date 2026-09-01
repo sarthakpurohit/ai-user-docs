@@ -15,7 +15,6 @@ _repos/
 docs-corpus/
 
 # Large generated artifacts (regenerable via make)
-generated/installing/
 eval/dataset/
 comparison/
 

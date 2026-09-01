@@ -1,0 +1,26 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="installing-image-based_{context}"]
+= Image-based installation overview
+:context: installing-image-based
+
+toc::[]
+
+// TODO: This is a stub assembly generated from code diffs. The image-based
+// installer is a new feature in {product-version} that enables creating a
+// single-node cluster from a seed image. Full documentation content should
+// be verified by a subject matter expert.
+
+Image-based installation provides a method for deploying single-node {product-title} clusters using a pre-generated seed image. This approach allows for rapid, reproducible deployments by capturing a seed cluster's configuration and using it to install new clusters with site-specific customizations.
+
+The `openshift-install image-based` command provides subcommands for generating image-based installation artifacts:
+
+* `openshift-install image-based create image` - Creates a site-specific installation ISO from a seed image and an `ImageBasedInstallationConfig`.
+* `openshift-install image-based create config-image` - Creates a configuration ISO that can be used alongside a pre-existing seed image.
+* `openshift-install image-based create config-template` - Generates a template `ImageBasedInstallationConfig` for customization.
+* `openshift-install image-based create image-config-template` - Generates a template for image configuration.
+
+include::modules/installation-image-based-about.adoc[leveloffset=+1]
+
+include::modules/installation-image-based-config.adoc[leveloffset=+1]
+
+include::modules/installation-image-based-deploying.adoc[leveloffset=+1]

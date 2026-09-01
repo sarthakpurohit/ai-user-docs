@@ -1,0 +1,44 @@
+// Module included in the following assemblies:
+//
+// * installing/installing_image_based_install/installing-image-based.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-image-based-deploying_{context}"]
+= Deploying a cluster using image-based installation
+
+// TODO: Stub module generated from code diffs. Content should be verified
+// by a subject matter expert.
+
+You can deploy a single-node {product-title} cluster using the image-based installation method.
+
+.Prerequisites
+
+* You have a valid `ImageBasedInstallationConfig` manifest.
+* You have access to a seed image.
+* You have installed the `openshift-install` CLI.
+
+.Procedure
+
+. Create the `ImageBasedInstallationConfig` manifest in a directory:
++
+[source,terminal]
+----
+$ mkdir image-based-config
+----
+
+. Generate the installation image:
++
+[source,terminal]
+----
+$ openshift-install image-based create image --dir image-based-config
+----
++
+The installer creates a site-specific installation ISO.
+
+. Boot the target host from the generated ISO image.
+
+. Monitor the installation progress.
+
+.Verification
+
+* After the host boots, verify the cluster is operational by accessing the API server.
