@@ -188,7 +188,9 @@ For LLM-based generation and evaluation, use the prompt files in `tmp/` (install
 
 ## Presentation
 
-Open `presentation/project-overview-final.html` in a browser for the full project overview with interactive results, diagrams, and methodology explanation.
+**[View the Project Overview](https://sarthakpurohit.github.io/ai-user-docs/)** — live GitHub Pages link with interactive results, diagrams, and methodology explanation.
+
+Or open `presentation/project-overview-final.html` locally in a browser.
 
 ## License
 
